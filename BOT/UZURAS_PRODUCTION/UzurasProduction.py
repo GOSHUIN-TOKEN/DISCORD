@@ -51,20 +51,24 @@ async def on_ready():
     print('------')
 
 
-def make_rain_img(message, coinname, tip):
-    base_list = os.listdir("./base/winter")
-    base_file_path = "./base/winter/" + random.choice(base_list)
+def make_rain_img(message, coinname, tip, user_num):
+    dir = "./base/winter"
+    base_list = os.listdir(dir)
+    name = random.choice(base_list)
+    base_file_path = dir + "/" + name
     base = Image.open(base_file_path)
 
     coin_logo_path = "./icon/" + coinname.upper() + ".png"
     print("coin_logo_path:" + coin_logo_path)
     if os.path.exists(coin_logo_path):
         print("ある")
-        for k in range(0, 5):
+        for k in range(0, 10):
+            if k > user_num:
+                break
             ride_coin_image(coin_logo_path, base)
     else:
         print("ない")
-        return None, None
+        return None, None, None
 
     # 現在のunixタイムを出す
     now = datetime.datetime.now()
@@ -80,7 +84,7 @@ def make_rain_img(message, coinname, tip):
     ### aaa = Image.alpha_composite(black, green)
     # layers = Image.alpha_composite(black, frame)
     # layers.save("level_up_image_{0:03d}".format(i)+ ".png")
-    return path, path2
+    return path, path2, name
 
 def ride_coin_image(coin_logo_path, base):
     coin_img = Image.open(coin_logo_path)
@@ -121,6 +125,18 @@ def make_tip_img(coinname, tip):
 @client.event
 async def on_message(message):
 
+    # komiyamma
+    if message.author.id == "397238348877529099":
+        # そのチャンネルに存在するメッセージを全て削除する
+        if message.content.startswith('!-!-!clear'):
+            tmp = await client.send_message(message.channel, 'チャンネルのメッセージを削除しています')
+            try:
+                async for msg in client.logs_from(message.channel):
+                    await client.delete_message(msg)
+            except:
+                print("削除中にエラーが発生しました")
+            return
+
     try:
         print(message.channel.id)
     except:
@@ -141,22 +157,28 @@ async def on_message(message):
         #if not is_uzura:
         #    return
 
-        mrain = re.search("\<\@(.+?)\> \-\-\- ([0-9\.]+)(.+?)\(Proportional to speech amount\) \-\-\-\>", message.content, re.IGNORECASE)
-        mtip = re.search("\<\@(.+?)\> \-\- ([0-9\.]+)(.+?) \-\-\> ", message.content, re.IGNORECASE)
-        print(mtip)
+        mrain = re.search("\<\@(.+?)\> \-\-\- ([0-9\.]+)(.+?)\(Proportional to speech amount\) \-\-\-\> (\d+) Users ", message.content, re.IGNORECASE)
         if mrain:
             print(mrain.group(1)) # WHO
             print(mrain.group(2)) # AMOUNT
             print(mrain.group(3)) # COIN
-            path, path2 = make_rain_img(message, mrain.group(3), mrain.group(2))
+            path, path2, name = make_rain_img(message, mrain.group(3), mrain.group(2), int(mrain.group(4)))
             if path and path2:
-                content_message = "..."
+                content_message = name
                 send_message_obj = await client.send_file(message.channel, path, content=content_message, filename=path2)
 
-        elif mtip:
-            print(mtip.group(1)) # WHO
-            print(mtip.group(2)) # AMOUNT
-            print(mtip.group(3)) # COIN
+        else:
+            print("else")
+            mtip = re.search("\<\@(.+?)\> \-\- ([0-9\.]+)(.+?) \-\-\> (\d+) Users", message.content, re.IGNORECASE)
+            if mtip:
+                print("mtip")
+                print(mtip.group(1)) # WHO
+                print(mtip.group(2)) # AMOUNT
+                print(mtip.group(3)) # COIN
+                path, path2, name = make_rain_img(message, mtip.group(3), mtip.group(2), int(mtip.group(4)))
+                if path and path2:
+                    content_message = name
+                    send_message_obj = await client.send_file(message.channel, path, content=content_message, filename=path2)
 
 
     except Exception as e:
