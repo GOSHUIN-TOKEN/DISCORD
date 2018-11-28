@@ -122,18 +122,18 @@ async def on_message(message):
         #if not is_uzura:
         #    return
 
-        mrain = re.search("\@(.+?) \-\-\- ([0-9\.]+)(.+?)\(Proportional to speech amount\) \-\-\-\>", message.content, re.IGNORECASE)
-        mtip = re.search("\@(.+?) \-\- ([0-9\.]+)(.+?) \-\-\> ", message.content, re.IGNORECASE)
+        mrain = re.search("\<\@(.+?)\> \-\-\- ([0-9\.]+)(.+?)\(Proportional to speech amount\) \-\-\-\>", message.content, re.IGNORECASE)
+        mtip = re.search("\<\@(.+?)\> \-\- ([0-9\.]+)(.+?) \-\-\> ", message.content, re.IGNORECASE)
         print(mtip)
         if mrain:
-            print(mrain.groups(1))
-            print(mrain.groups(2))
-            print(mrain.groups(3))
+            print(mrain.groups(1)) # WHO
+            print(mrain.groups(2)) # AMOUNT
+            print(mrain.groups(3)) # COIN
 
         elif mtip:
-            print(mtip.groups(1))
-            print(mtip.groups(2))
-            print(mtip.groups(2))
+            print(mtip.groups(1)) # WHO
+            print(mtip.groups(2)) # AMOUNT
+            print(mtip.groups(2)) # COIN
 
 
     except:
