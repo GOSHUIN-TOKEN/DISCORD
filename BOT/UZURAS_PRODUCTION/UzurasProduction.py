@@ -40,15 +40,66 @@ client = discord.Client()
 # 他のモジュールへの伝搬が面倒なので、Pythonの組み込み変数同様の扱いにしてしまう
 builtins.client = client
 
+class UzurasInfo:
+    def __init__(self):
+        self.id = '443151241816834048'
+        self.member_obj = None
+        
+    def assign(self):
+
+        # 格納済みなら何もしない
+        if self.member_obj != None:
+            return True
+
+        # このBOTが所属しているサーバー全てから検索
+        for svr in client.servers:
+            # メンバーに
+            for m in svr.members:
+                if m.id == self.id: # うずら
+                    self.member_obj = m
+                    return True
+
+        return False
+
+builtins.uzuras_info = None
+
+class UzurasActInfo:
+    def __init__(self, uzuras_info):
+        self.id = client.user.id
+        server_obj = uzuras_info.member_obj.server
+        self.member_obj = server_obj.get_member(self.id)
+
+builtins.uzuras_act_info = None
+
 
 # ログイン&準備が完了したら一度だけ実行される
 @client.event
 async def on_ready():
+
+    global uzuras_info
+    global uzuras_act_info
+
     # コンソールにBOTとしてログインした名前とUSER-IDを出力
     print('Logged in as')
     print('BOT-NAME :', client.user.name)
     print('BOT-ID   :', client.user.id)
     print('------')
+        
+    while(True):
+        if uzuras_info == None:
+            uzuras_info = UzurasInfo()
+            uzuras_info.assign()
+        if uzuras_act_info == None:
+           uzuras_act_info = UzurasActInfo(uzuras_info)
+
+        if uzuras_info.member_obj:
+            if uzuras_info.member_obj.status == discord.Status.online:
+                await client.change_nickname(uzuras_act_info.member_obj, "鶉･演出《鶉生息》")
+            else:
+                await client.change_nickname(uzuras_act_info.member_obj, "鶉･演出《鶉休眠》")
+
+        await asyncio.sleep(5)
+
 
 # 現在の季節のディレクトリ
 def GetCurrentSeasonDirectory():
