@@ -4,17 +4,13 @@ import os
 
 
 def get_discord_bot_token():
-    # テスト用が有効ならテストサーバー用の接続トークンを返す
-    BOT_TOKEN = os.getenv("DISCORD_TEST_BOT_UZURA", r'')
-    if BOT_TOKEN != "-":
-        return BOT_TOKEN
 
     # 本番用のみが有効なら本番用の接続トークンを返す
-    BOT_TOKEN = os.getenv("DISCORD_BOT_UZURA", r'')
+    BOT_TOKEN = os.getenv("DISCORD_UZURAS_ACT_BOT", r'')
     if BOT_TOKEN != "":
         return BOT_TOKEN
 
-    print("エラー: 環境変数のDISCORD_BOT_TOKENが設定されていない")
+    print("エラー: 環境変数のDISCORD_UZURAS_ACT_BOTが設定されていない")
     return None
 
 
