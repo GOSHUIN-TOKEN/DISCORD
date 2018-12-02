@@ -44,7 +44,8 @@ class UzurasInfo:
     def __init__(self):
         self.id = '443151241816834048'
         self.member_obj = None
-        
+        self.assign()
+
     def assign(self):
 
         # 格納済みなら何もしない
@@ -65,6 +66,9 @@ builtins.uzuras_info = None
 
 class UzurasActInfo:
     def __init__(self, uzuras_info):
+        # 自分自身の情報ではあるが、
+        # 自分自信のユーザーオブジェクト⇒メンバーオブジェクトがちょっと変換が重いので
+        # ここで格納しておく。
         self.id = client.user.id
         server_obj = uzuras_info.member_obj.server
         self.member_obj = server_obj.get_member(self.id)
@@ -76,21 +80,16 @@ builtins.uzuras_act_info = None
 @client.event
 async def on_ready():
 
-    global uzuras_info
-    global uzuras_act_info
-
     # コンソールにBOTとしてログインした名前とUSER-IDを出力
     print('Logged in as')
     print('BOT-NAME :', client.user.name)
     print('BOT-ID   :', client.user.id)
     print('------')
-        
+
+    uzuras_info = UzurasInfo()
+    uzuras_act_info = UzurasActInfo(uzuras_info)
+
     while(True):
-        if uzuras_info == None:
-            uzuras_info = UzurasInfo()
-            uzuras_info.assign()
-        if uzuras_act_info == None:
-           uzuras_act_info = UzurasActInfo(uzuras_info)
 
         if uzuras_info.member_obj:
             if uzuras_info.member_obj.status == discord.Status.online:
@@ -128,7 +127,7 @@ def GetIntOfNowTimeStamp():
     return unix
 
 
-def make_rain_img(message, coinname, tip, user_num):
+def MakeRainImage(message, coinname, tip, user_num):
     dir = GetCurrentSeasonDirectory()
     # ベースとなるイメージと、イメージのファイル名
     base_image, file_name = GetBaseImageRelativePath(dir)
@@ -240,8 +239,7 @@ async def on_message(message):
     if client.user == message.author:
         return
 
-    
-    # こみやんま#0314
+        # こみやんま#0314
     if message.author.id == "397238348877529099":
         # そのチャンネルに存在するメッセージを全て削除する
         if message.content.startswith('!-!-!clear'):
@@ -265,10 +263,10 @@ async def on_message(message):
             print(mrain.group(1)) # WHO
             print(mrain.group(2)) # AMOUNT
             print(mrain.group(3)) # COIN
-            path, path2, name = make_rain_img(message, mrain.group(3), mrain.group(2), int(mrain.group(4)))
-            if path and path2:
-                content_message = name
-                send_message_obj = await client.send_file(message.channel, path, content=content_message, filename=path2)
+            temp_file_relative_path, upload_file_relative_path, file_name = MakeRainImage(message, mrain.group(3), mrain.group(2), int(mrain.group(4)))
+            if temp_file_relative_path and upload_file_relative_path:
+                content_message = file_name
+                send_message_obj = await client.send_file(message.channel, temp_file_relative_path, content=content_message, filename=upload_file_relative_path)
 
         else:
             mtip = re.search("\<\@(.+?)\> \-\- ([0-9\.]+)(.+?) \-\-\> (\d+) Users", message.content, re.IGNORECASE)
@@ -277,10 +275,10 @@ async def on_message(message):
                 print(mtip.group(1)) # WHO
                 print(mtip.group(2)) # AMOUNT
                 print(mtip.group(3)) # COIN
-                path, path2, name = make_rain_img(message, mtip.group(3), mtip.group(2), int(mtip.group(4)))
-                if path and path2:
-                    content_message = name
-                    send_message_obj = await client.send_file(message.channel, path, content=content_message, filename=path2)
+                temp_file_relative_path, upload_file_relative_path, file_name = MakeRainImage(message, mrain.group(3), mrain.group(2), int(mrain.group(4)))
+                if temp_file_relative_path and upload_file_relative_path:
+                    content_message = file_name
+                    send_message_obj = await client.send_file(message.channel, temp_file_relative_path, content=content_message, filename=upload_file_relative_path)
 
         if mrain or mtip:
             try:
