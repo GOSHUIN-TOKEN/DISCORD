@@ -243,7 +243,7 @@ async def on_message(message):
     if message.author.id == "397238348877529099":
         # そのチャンネルに存在するメッセージを全て削除する
         if message.content.startswith('!-!-!clear'):
-            DeleteChannelAllMessage(message)
+            await DeleteChannelAllMessage(message)
             return
 
     try:
