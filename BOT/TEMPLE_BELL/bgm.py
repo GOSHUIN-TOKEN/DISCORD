@@ -1,5 +1,6 @@
-#coding: utf-8
+﻿#coding: utf-8
 # ver 2.1
+# 文字の認識をよくするため
 
 import builtins
 import re
@@ -53,9 +54,16 @@ async def start_bgm(message, bgm_path):
         print(traceback.format_tb(e3.__traceback__))
         print("例外:start_bgm error")
 
-    player = voice.create_ffmpeg_player(bgm_path)
-    GLOBAL_PLAYER[message.author.id] = player
-    player.start()
+    try:
+        player = voice.create_ffmpeg_player(bgm_path)
+        GLOBAL_PLAYER[message.author.id] = player
+        asyncio.sleep(3)
+        player.start()
+    except Exception as e4:
+        t, v, tb = sys.exc_info()
+        print(traceback.format_exception(t,v,tb))
+        print(traceback.format_tb(e4.__traceback__))
+        print("例外:start_bgm error")
     
 
 async def fadeout_bgm(message):
@@ -93,18 +101,18 @@ async def stop_bgm(message):
 
 
 
-async def bonsho_bgm(message):
+async def bonshou_bgm(message):
     try:
-        m1 = re.search("^!bonsho_bgm_play (.+)$", message.content)
+        m1 = re.search("^!bonshou_bgm_play (.+)$", message.content)
         if m1:
             bgm_file = m1.group(1)
             await start_bgm(message, "bgm/" + bgm_file)
             
-        m2 = re.search("^!bonsho_bgm_fadeout$", message.content)
+        m2 = re.search("^!bonshou_bgm_fadeout$", message.content)
         if m2:
             await fadeout_bgm(message)
 
-        m3 = re.search("^!bonsho_bgm_stop$", message.content)
+        m3 = re.search("^!bonshou_bgm_stop$", message.content)
         if m3:
             await stop_bgm(message)
 
@@ -112,5 +120,5 @@ async def bonsho_bgm(message):
         t, v, tb = sys.exc_info()
         print(traceback.format_exception(t,v,tb))
         print(traceback.format_tb(e5.__traceback__))
-        print("例外:bonsho_bgm error")
+        print("例外:bonshou_bgm error")
         

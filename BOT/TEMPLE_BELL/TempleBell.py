@@ -51,8 +51,8 @@ async def on_ready():
 @client.event
 async def on_message(message):
 
-    if "!bonsho_bgm" in message.content:
-            await bgm.bonsho_bgm(message)
+    if "!bonshou_bgm" in message.content:
+            await bgm.bonshou_bgm(message)
 
 # APP(BOT)を実行
 client.run(BOT_TOKEN)
