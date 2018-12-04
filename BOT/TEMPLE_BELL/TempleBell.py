@@ -59,6 +59,7 @@ def get_bgm_cache_channel(server):
             
     return None
 
+# 
 def get_bonshou_play_cmd():
     return "!bonshou_bgm_play bonshou_01_64k.mp3"
 
@@ -100,18 +101,19 @@ async def on_ready():
 
             # ２段構えぐらいで、梵鐘を鳴らず、コマンドを発行
             try:
-                message_obj = client.send_message(cannel_bgm_cache_channel, get_bonshou_play_cmd() )
+                print(cannel_bgm_cache_channel.name)
+                message_obj = await client.send_message(cannel_bgm_cache_channel, get_bonshou_play_cmd() )
             except:
                 await asyncio.sleep(5)
                 try:
-                    message_obj = client.send_message(cannel_bgm_cache_channel, get_bonshou_play_cmd() )
+                    message_obj = await client.send_message(cannel_bgm_cache_channel, get_bonshou_play_cmd() )
                 except:
                     pass
 
             try:
                 # 発行したコマンドがどんどんたまると邪魔なので消す
                 await asyncio.sleep(5)
-                client.delete_message(message_obj)
+                await client.delete_message(message_obj)
             except:
                 pass                
 
@@ -129,7 +131,7 @@ async def on_message(message):
     # メッセージが一致していて
     if "!bonshou_bgm" in message.content:
         # メッセージコマンド用のチャンネルと一致しているならば…
-        if message.channel == get_bgm_cache_channel():
+        if message.channel == get_bgm_cache_channel(message.channel.server):
             await bgm.bonshou_bgm(message)
 
 # APP(BOT)を実行
