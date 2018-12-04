@@ -1,0 +1,16 @@
+{
+    "eth_address": "0x0a16D5B52Fd1B25df00e8E0598cF520A2fc9b3f6",
+    "waves_address": "",
+    "omikuji_ticket_count": 1,
+    "roulette_ticket_count": 0,
+    "food_ticket_count": 0,
+    "drink_ticket_count": 0,
+    "kaiwa_experiment": 0,
+    "kaiwa_experiment_coef": 1,
+    "blog_lv": 0,
+    "twitter_lv": 0,
+    "facebook_lv": 0,
+    "kaiwa_lv": 0,
+    "user_id": "391081056155205661",
+    "omikuji_ticket_last_gettime": 1535705367
+}
