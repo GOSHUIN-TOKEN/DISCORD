@@ -26,7 +26,7 @@ def get_btc_jpy():
 def get_bda_num(msg):
     btc_jpy = get_btc_jpy()
     input_jpy = get_input_jpy(msg)
-    bda_sat = 0.000000005
+    bda_sat = 0.00000005
     
     return input_jpy / (btc_jpy * bda_sat)
 

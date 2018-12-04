@@ -70,7 +70,7 @@ async def on_message(message):
 
 
     if TeamSalaly.is_permission_teamhousyu_condition(message):
-        await TeamHousyu.say_message(message)
+        await TeamSalaly.say_message(message)
         return
 
 
