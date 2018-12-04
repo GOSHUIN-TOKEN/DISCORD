@@ -59,10 +59,11 @@ def get_bgm_cache_channel(server):
             
     return None
 
-# 
+# 再生を意味するコマンド。まぁもう決め打ちでいいでしょ…
 def get_bonshou_play_cmd():
     return "!bonshou_bgm_play bonshou_01_64k.mp3"
 
+# フェイドアウト。 別途 stopも作ってもいいかもしれない。
 def get_bonshou_fadeout_cmd():
     return "!bonshou_bgm_fadeout"
 
