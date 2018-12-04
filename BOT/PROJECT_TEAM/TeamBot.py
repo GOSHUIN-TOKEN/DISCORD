@@ -15,7 +15,7 @@ import discord
 
 import EnvironmentVariable
 
-import TeamHousyu
+import TeamSalaly
 
 
 # 上記で取得したアプリのトークンを入力
@@ -69,7 +69,7 @@ async def on_message(message):
         pass
 
 
-    if TeamHousyu.is_permission_teamhousyu_condition(message):
+    if TeamSalaly.is_permission_teamhousyu_condition(message):
         await TeamHousyu.say_message(message)
         return
 
