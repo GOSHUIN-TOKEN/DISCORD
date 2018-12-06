@@ -7,7 +7,7 @@ import discord
 
 
 def is_mic_permission_condition(message):
-    return str(message.channel) in ["ディアたんのマイク"]
+    return str(message.channel) in ["📢朱伊のマイク"]
 
 
 def say_mic_message(message):
@@ -16,6 +16,7 @@ def say_mic_message(message):
     message_list = all_message.split("\n")
     
     if len(message_list) < 2:
+        print("投稿文章は条件を満たさず")
         return "", ""
         
     target_channel_name = message_list[0]
@@ -24,12 +25,11 @@ def say_mic_message(message):
 
     target_channel_id = ""
     for ch in message.server.channels:
-#        print("ターゲット名" + target_channel_name)
-#        print("チャンネル名" + "<#" + ch.id + ">")
         if str("<#" + ch.id + ">") == str(target_channel_name):
             target_channel_id = ch.id
 
-#    target_channel = discord.Object(id='12324234183172')
+    print("マイク対象のチャンネルIDは:" + str(target_channel_id) )
+
     if target_channel_id == "":
         return "", ""
         

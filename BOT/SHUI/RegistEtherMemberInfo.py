@@ -12,20 +12,28 @@ import datetime
 import time
 import glob
 import discord
+import traceback
 
 import WalletAddressDeleter
 
 async def report_error(message, error_msg):
     em = discord.Embed(title=" ", description="─────────\n" , color=0xDEED33)
-    em.set_author(name='ディア', icon_url=client.user.default_avatar_url)
-    em.set_author(name='ディア', icon_url='http://bdacoin.org/bot/omikuji/image/face.png')
+    avator_url = client.user.default_avatar_url or client.user.default_avatar_url
+    avator_url = avator_url.replace(".webp?", ".png?")
+    em.set_author(name='朱伊', icon_url=avator_url)
     
     em.add_field(name="返信相手", value= "<@" + message.author.id + ">", inline=False)
     em.add_field(name="エラー", value=error_msg, inline=False)
+    print("ここまできた1")
     try:
         print(error_msg)
+        print("ここまできた２")
         await client.send_message(message.channel, embed=em)
-    except:
+    except Exception as e:
+        print("ここまできた３")
+        t, v, tb = sys.exc_info()
+        print(traceback.format_exception(t,v,tb))
+        print(traceback.format_tb(e.__traceback__))
         print(sys.exc_info())
 
 def get_data_memberinfo_path(message, id):
@@ -34,13 +42,17 @@ def get_data_memberinfo_path(message, id):
 def get_data_memberpaid_path(message, id):
     return 'DataMemberPaid/' + str(id) + ".json"
 
+def get_data_ticketinfo_path(message, id):
+    return 'DataTicketInfo/' + str(id) + ".json"
+
+
 async def decrement_one_member_omikuji_data(message, id):
     try:
         has = await has_member_data(message, id, False)
         if not has:
             return None
 
-        path = get_data_memberinfo_path(message, id)
+        path = get_data_ticketinfo_path(message, id)
         print(path)
         with open(path, "r") as fr:
             memberinfo = json.load(fr)
@@ -51,7 +63,7 @@ async def decrement_one_member_omikuji_data(message, id):
 
         memberinfo["omikuji_ticket_count"] = memberinfo["omikuji_ticket_count"] - 1
 
-        path = get_data_memberinfo_path(message, id)
+        path = get_data_ticketinfo_path(message, id)
         json_data = json.dumps(memberinfo, indent=4)
         with open(path, "w") as fw:
             fw.write(json_data)
@@ -73,7 +85,7 @@ async def increment_one_member_omikuji_data(message, id):
         if not has:
             return None
 
-        path = get_data_memberinfo_path(message, id)
+        path = get_data_ticketinfo_path(message, id)
         print(path)
         with open(path, "r") as fr:
             memberinfo = json.load(fr)
@@ -107,7 +119,7 @@ async def increment_one_member_omikuji_data(message, id):
         else:
             memberinfo["omikuji_ticket_last_gettime"] = unix
 
-        path = get_data_memberinfo_path(message, id)
+        path = get_data_ticketinfo_path(message, id)
         json_data = json.dumps(memberinfo, indent=4)
         with open(path, "w") as fw:
             fw.write(json_data)
@@ -127,7 +139,7 @@ async def get_count_one_member_omikuji_data(message, id):
         if not has:
             return 0
 
-        path = get_data_memberinfo_path(message, id)
+        path = get_data_ticketinfo_path(message, id)
         print(path)
         with open(path, "r") as fr:
             memberinfo = json.load(fr)
@@ -169,30 +181,48 @@ async def make_one_member_data(message, address, id):
         memberinfo = {
             "eth_address": "",
             "waves_address": "",
-            "omikuji_ticket_count": 0,
-            "food_ticket_count": 0,
-            "blog_lv": 0,
-            "twitter_lv": 0,
-            "facebook_lv": 0,
             "user_id": 0
         }
         
         memberinfo["user_id"] = id
-
         memberinfo["eth_address"] = address
 
-        memberinfo["omikuji_ticket_count"] = 1
-        
         path = get_data_memberinfo_path(message, id)
         print(path)
         json_data = json.dumps(memberinfo, indent=4)
         with open(path, "w") as fw:
             fw.write(json_data)
-        return True
+
+        return await make_one_ticketinfo_data(message, address, id)
+
     except:
         await report_error(message, "make_one_member_data 中にエラーが発生しました。")
         await report_error(message, sys.exc_info())
     return False
+
+
+async def make_one_ticketinfo_data(message, address, id):
+    try:
+        ticketinfo = {
+            "omikuji_ticket_count": 0,
+            "user_id": 0
+        }
+        
+        ticketinfo["user_id"] = id
+        ticketinfo["omikuji_ticket_count"] = 1
+        
+        path = get_data_ticketinfo_path(message, id)
+        print(path)
+        json_data = json.dumps(ticketinfo, indent=4)
+        with open(path, "w") as fw:
+            fw.write(json_data)
+
+        return True
+    except:
+        await report_error(message, "make_one_ticketinfo_data 中にエラーが発生しました。")
+        await report_error(message, sys.exc_info())
+    return False
+
 
 
 async def make_one_member_paid(message, id):
@@ -273,7 +303,7 @@ def is_regist_one_member_data_condition(message):
 
 def get_ether_regist_channel(message):
     for ch in message.channel.server.channels:
-        if "イーサアドレス登録" in str(ch) or "eth-address" in str(ch) or "ethアドレス登録" in str(ch):
+        if "お財布登録" in str(ch) or "eth-address" in str(ch):
             return ch
             
     return None
@@ -331,7 +361,6 @@ async def show_one_member_data(message, id):
         em.set_thumbnail(url=avator_url)
         em.add_field(name="メンバー情報", value="<@" + id + ">", inline=False)
         em.add_field(name="ETHウォレットのアドレス", value=memberinfo["eth_address"], inline=False)
-        em.add_field(name="幸運のおみくじ券", value=str(memberinfo["omikuji_ticket_count"]) + " 枚", inline=False)
 
 
         try:

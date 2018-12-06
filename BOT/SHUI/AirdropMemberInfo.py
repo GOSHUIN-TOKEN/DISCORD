@@ -18,8 +18,10 @@ import WalletAddressDeleter
 
 async def report_error(message, error_msg):
     em = discord.Embed(title=" ", description="─────────\n" , color=0xDEED33)
-    em.set_author(name='Dia', icon_url=client.user.default_avatar_url)
-    em.set_author(name='Dia', icon_url='http://bdacoin.org/bot/omikuji/image/face.png')
+
+    avator_url = client.user.default_avatar_url or client.user.default_avatar_url
+    avator_url = avator_url.replace(".webp?", ".png?")
+    em.set_author(name='Shui', icon_url=avator_url)
     
     em.add_field(name="返信相手(Reply)", value= "<@" + message.author.id + ">", inline=False)
     em.add_field(name="エラー(Error)", value=error_msg, inline=False)

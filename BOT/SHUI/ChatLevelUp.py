@@ -79,8 +79,9 @@ def get_sequence_matcher_coef(test_1, text_2):
 async def report_error(message, error_msg):
     print(message, error_msg)
     em = discord.Embed(title=" ", description="─────────\n" , color=0xDEED33)
-    em.set_author(name='ディア', icon_url=client.user.default_avatar_url)
-    em.set_author(name='ディア', icon_url='http://bdacoin.org/bot/omikuji/image/face.png')
+    avator_url = client.user.default_avatar_url or client.user.default_avatar_url
+    avator_url = avator_url.replace(".webp?", ".png?")
+    em.set_author(name='朱伊', icon_url=avator_url)
     
     em.add_field(name="返信相手", value= "<@" + message.author.id + ">", inline=False)
     em.add_field(name="エラー", value=error_msg, inline=False)
@@ -127,10 +128,9 @@ async def show_level_infomation(message, exp, default="会話レベル情報"):
     try:
         lv = get_lv_from_exp(exp)
         em = discord.Embed(title="", description="", color=0xDEED33)
-        em.add_field(name=default, value= "<@" + message.author.id + ">", inline=True)
+        em.add_field(name=default, value= "<@" + message.author.id + ">", inline=False)
 
         avator_url = message.author.avatar_url or message.author.default_avatar_url
-        print(avator_url)
         avator_url = avator_url.replace(".webp?", ".png?")
 
         try:
@@ -139,12 +139,12 @@ async def show_level_infomation(message, exp, default="会話レベル情報"):
                     if sum(paidinfo["kaiwa_paid_amount"].values()) > 0:
                         max_level_YM = max(paidinfo["kaiwa_paid_lv"].keys())
                         print(max_level_YM)
-                        em.add_field(name="報酬を支払済みの Lv", value=str((paidinfo["kaiwa_paid_lv"][max_level_YM] // 5) * 5), inline=False)
-                        em.add_field(name="報酬を支払済みの BDA枚数", value=str(max(paidinfo["kaiwa_paid_amount"].values())) + " 枚", inline=False)
+                        em.add_field(name="報酬を支払済みの Lv", value=str((paidinfo["kaiwa_paid_lv"][max_level_YM] // 5) * 5), inline=True)
+                        em.add_field(name="報酬を支払済みの GOSHUIN枚数", value=str(max(paidinfo["kaiwa_paid_amount"].values())) + " 枚", inline=True)
                     else:
-                        em.add_field(name="報酬を支払済みの BDA枚数", value="0 枚", inline=False)
+                        em.add_field(name="報酬を支払済みの GOSHUIN枚数", value="0 枚", inline=True)
                 else:
-                    em.add_field(name="報酬を支払済みの BDA枚数", value="0 枚", inline=False)
+                    em.add_field(name="報酬を支払済みの GOSHUIN枚数", value="0 枚", inline=True)
                 
         except Exception as e3:
             t, v, tb = sys.exc_info()
@@ -163,7 +163,7 @@ async def show_level_infomation(message, exp, default="会話レベル情報"):
         if int_cur_per_nex > 200:
             int_cur_per_nex = 200
         print("★" + str(int_cur_per_nex))
-        em.add_field(name="経験値", value=str_cur_per_nex, inline=False)
+        em.add_field(name="経験値", value=str_cur_per_nex, inline=True)
         em.set_thumbnail(url=avator_url)
         
         em.set_image(url="http://bdacoin.org/bot/levelup/image/level_up_image_{0:03d}.png".format(int_cur_per_nex))
@@ -357,32 +357,11 @@ async def update_one_kaiwa_post_data(message):
 
         prev_level = get_lv_from_exp(postinfo["exp"])
 
-        # ディアたんと会話だったらレベルに応じて上限を抑えてしまう
-        if "ディアたんと会話" in message.channel.name:
-            if prev_level >= 50:
-                if add_experience > 4:
-                    add_experience = 4
-            elif prev_level >= 40:
-                if add_experience > 5:
-                    add_experience = 5
-            elif prev_level >= 30:
-                if add_experience > 7:
-                    add_experience = 7
-            elif prev_level >= 25:
-                if add_experience > 10:
-                    add_experience = 10
-            elif prev_level >= 20:
-                if add_experience > 15:
-                    add_experience = 15
-            elif prev_level >= 15:
-                if add_experience > 20:
-                    add_experience = 20
-            elif prev_level >= 10:
-                if add_experience > 32:
-                    add_experience = 32
-            elif prev_level >= 5:
-                if add_experience > 48:
-                    add_experience = 48
+        # 朱伊と会話だったらレベルに応じて上限を抑えてしまう
+        if "朱伊と会話" in message.channel.name and prev_level > 0:
+            if add_experience > (100/prev_level):
+                 add_experience = int(100/prev_level)
+                 print(str(100/prev_level) + "へと抑え込み")
 
         postinfo["exp"] = postinfo["exp"] + add_experience
         post_level = get_lv_from_exp(postinfo["exp"])

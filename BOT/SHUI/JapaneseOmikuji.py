@@ -1,24 +1,6 @@
-#coding: utf-8
+﻿#coding: utf-8
 # ver 2.1
 
-
-import builtins
-
-import re
-import random
-import requests
-import json
-import types
-import base64
-import os
-import sys, datetime, time
-import discord
-import RegistEtherMemberInfo
-import EastAsianWidthCounter
-
-
-#coding: utf-8
-# ver 2.1
 
 import builtins
 
@@ -33,6 +15,11 @@ import sys, datetime, time
 import discord
 import traceback
 import copy
+
+
+import RegistEtherMemberInfo
+import EastAsianWidthCounter
+
 
 
 def get_data_inviteinfo_path():
@@ -88,10 +75,8 @@ def is_this_member_issue_member(member):
 
 def is_permission_omikuji_condition(message):
     ch = str(message.channel)
-    if ch in ["★おみくじコーナー★"]:
+    if ch in ["🔖おみくじ"]:
        return True
-#    if re.match("ディアたんと会話", ch) and (random.randint(1,10) < 3):
-#       return True
        
     return False
 
@@ -136,7 +121,7 @@ DirDataJapaneseOmikuji = "DataJapaneseOmikuji"
 
 def get_date_omikuji_file(date):
     global DirDataJapaneseOmikuji
-    fullpath = DirDataJapaneseOmikuji + "/" + date + ".txt"
+    fullpath = DirDataJapaneseOmikuji + "/" + date + ".json"
     return fullpath
     
 def is_exist_today_omikuji_file(date):
@@ -177,16 +162,19 @@ def save_today_omikuji_data(date, dict):
 
 def get_busy_omikuji_message(message):
     em = discord.Embed(title=" ", description="─────────\n" + message.author.display_name, color=0xDEED33)
-    em.set_author(name='ディア', icon_url=client.user.default_avatar_url)
-    em.set_author(name='ディア', icon_url='http://bdacoin.org/bot/omikuji/image/face.png')
+
+    avator_url = client.user.default_avatar_url or client.user.default_avatar_url
+    avator_url = avator_url.replace(".webp?", ".png?")
+    em.set_author(name='朱伊', icon_url=avator_url)
     
     em.add_field(name="只今集計中です!!", value="─────────", inline=False)
     return em
 
 def get_error_omikuji_message(message):
     em = discord.Embed(title=" ", description="─────────\n" + message.author.display_name, color=0xDEED33)
-    em.set_author(name='ディア', icon_url=client.user.default_avatar_url)
-    em.set_author(name='ディア', icon_url='http://bdacoin.org/bot/omikuji/image/face.png')
+    avator_url = client.user.default_avatar_url or client.user.default_avatar_url
+    avator_url = avator_url.replace(".webp?", ".png?")
+    em.set_author(name='朱伊', icon_url=avator_url)
     
     em.add_field(name="エラーです!!", value="─────────", inline=False)
     return em
@@ -214,7 +202,7 @@ async def get_embedded_omikuji_object(message):
     has = await RegistEtherMemberInfo.has_member_data(message, message.author.id, True)
     print("メンバー情報がある？" + str(has))
     if not has:
-        return
+        return None, None
         
     member_exp = 0
     try:
@@ -230,7 +218,7 @@ async def get_embedded_omikuji_object(message):
     #今日の日付の作成
     date = message.timestamp.now()
     if is_busy_timestamp(message):
-        return get_busy_omikuji_message(message)
+        return get_busy_omikuji_message(message), None
 
     strdate = get_today_datestring(message)
     tstamp = message.timestamp.now()
@@ -250,12 +238,12 @@ async def get_embedded_omikuji_object(message):
 
         result = save_today_omikuji_data(strdate, first_dict)
         if result == False:
-            return get_error_omikuji_message(message)
+            return get_error_omikuji_message(message), None
     
     # ファイルがあるので読み込み
     result = get_today_omikuji_data(strdate)
     if result == False:
-        return get_error_omikuji_message(message)
+        return get_error_omikuji_message(message), None
     
     un_list = {
         "大吉":"01",
@@ -333,9 +321,10 @@ async def get_embedded_omikuji_object(message):
         is_use_ticket = False
     # 
     em = discord.Embed(title=" ", description="─────────\n" + message.author.display_name + " さんの運勢は ...", color=0xDEED33)
-#    em = discord.Embed(title=message.author.display_name + " さんの運勢", description=message.author.display_name + " さんの運勢は... __" + omikuji_key + "__ですよ!!", colour=0xDEED33)
-    em.set_author(name='ディア', icon_url=client.user.default_avatar_url)
-    em.set_author(name='ディア', icon_url='http://bdacoin.org/bot/omikuji/image/face.png')
+
+    avator_url = client.user.default_avatar_url or client.user.default_avatar_url
+    avator_url = avator_url.replace(".webp?", ".png?")
+    em.set_author(name='朱伊', icon_url=avator_url)
     
     em.add_field(name=omikuji_key + "です!!", value="─────────", inline=False)
     if is_use_ticket:
@@ -345,25 +334,16 @@ async def get_embedded_omikuji_object(message):
 
     em.set_thumbnail(url="http://bdacoin.org/bot/omikuji/image/" + omikuji_lv + "_omkj.png")
     em.set_image(url="http://bdacoin.org/bot/omikuji/image/" + omikuji_lv + ".png")
-    return em
+    return em, omikuji_key
 
 
 
 async def say_embedded_omikuji_message(message):
     if is_omikuji_command(message.content):
-        em = await get_embedded_omikuji_object(message)
+        em, deme = await get_embedded_omikuji_object(message)
         if em != None:
             await client.send_message(message.channel, embed=em)
-
-        # 簡易だと以下だがデザイン性には欠ける
-        # await client.send_message(message.channel, str(message.author.display_name) + "さんの運勢だよ!")
-        # img_list = [ "01.png", "02.png", "03.png", "04.png", "05.png" ]
-
-        # １つランダムで選ぶ
-        # path = random.choice(img_list)
-
-        # 該当チャンネルに投稿する
-        # await client.send_file(message.channel, path)
+            return deme
 
 
 # 会話からおみくじを得る

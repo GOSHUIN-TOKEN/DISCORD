@@ -30,6 +30,7 @@ import asyncio
 import ChatLevelUp
 import InviteCounter
 
+import threading
 
 # 上記で取得したアプリのトークンを入力
 
@@ -118,6 +119,18 @@ async def on_message(message):
         for r in roles:
             if r.name == "BOT":
                 return
+            if r.name == "UZURAS･ACT":
+                return
+            if r.name == "TempleBell":
+                return
+            if r.name == "Shui":
+                return
+            if r.name == "巫女":
+                return
+            if r.name == "鐘":
+                return
+            if r.name == "うずら":
+                return
     except:
         pass
 
@@ -178,11 +191,10 @@ async def on_message(message):
         await InviteCounter.invites_show_command(message, message.author)
         return
 
-    if "jack-o-lantern" in message.channel.name:
+    if "歌留多" in message.channel.name:
         return
 
-    if "ポーカーキャッシュ" in message.channel.name:
-        print("ポーカーキャッシュ")
+    if "音《一時記憶》" in message.channel.name or "画《一時記憶》" in message.channel.name:
         return
 
     try:
@@ -196,6 +208,7 @@ async def on_message(message):
 
 
     # イメージカテゴリ
+    """
     try:
         att = ImageCategory.is_analyze_condition(message)
         if att != None:
@@ -206,42 +219,7 @@ async def on_message(message):
         print(traceback.format_tb(e.__traceback__))
         print("例外:is_analyze_condition")
         pass
-
-
-    # 表示
-    if len(message.content) > 0:
-        for regex in NaturalChat.NaturalChattableChannelRegex():
-            if re.match(regex, str(message.channel)):
-                if str(message.channel) == "雑談":
-
-                    try:
-                        msg = str(message.content)
-                        dia_appear_remain_cnt = sm3.decrement_appear_zatsudan_cnt(msg)
-                        if dia_appear_remain_cnt >= 0:
-                            # 3の方を使って会話
-                            msg = sm3.get_naturalchat_mesasge(message)
-                            await client.send_typing_message(message.channel, msg)
-
-                    except RuntimeError:
-                        print(RuntimeError)
-
-
-                # おみくじが許される条件
-                elif JapaneseOmikuji.is_permission_omikuji_condition(message):
-                    # 2の方を使って会話
-                    msg = sm2.get_naturalchat_mesasge(message)
-                    await client.send_message(message.channel, msg)
-                    await JapaneseOmikuji.say_embedded_omikuji_message(message)
-
-                elif "ディアたんと会話" in str(message.channel):
-                    # 1の方を使って会話
-                    msg = sm1.get_naturalchat_mesasge(message)
-                    await client.send_typing_message(message.channel, msg)
-
-                else:
-                    # 4の方を使って会話
-                    msg = sm4.get_naturalchat_mesasge(message)
-                    await client.send_typing_message(message.channel, msg)
+    """
     
     # 会話からおみくじを得る
     try:
@@ -253,6 +231,36 @@ async def on_message(message):
         print("例外:get_omikuji_from_kaiwa")
         pass
 
+    # 表示
+    if len(message.content)> 0 and not message.content.startswith("!") :
+        for regex in NaturalChat.NaturalChattableChannelRegex():
+            if re.match(regex, str(message.channel)):
+
+                # おみくじが許される条件
+                if JapaneseOmikuji.is_permission_omikuji_condition(message):
+                    # 2の方を使って会話
+                    deme = await JapaneseOmikuji.say_embedded_omikuji_message(message)
+                    if deme == None:
+                        msg = sm2.get_naturalchat_mesasge(message)
+                    else:
+                        msg = sm2.get_naturalchat_mesasge(message, deme)
+                    await client.send_message(message.channel, msg)
+
+                elif "見習い巫女" in str(message.channel):
+                    await client.send_typing(message.channel)
+                    #result_pon = await asyncio.wait([client.send_typing(message.channel), abcc(message)])
+                    #print(result_pon)
+                    msg = sm1.get_naturalchat_mesasge(message)
+                    await client.send_message(message.channel, msg)
+
+                else:
+                    pass
+                    """
+                    # 4の方を使って会話
+                    msg = sm4.get_naturalchat_mesasge(message)
+                    await client.send_message(message.channel, msg)
+                    """
+                    
     try:
         await ChatLevelUp.push_kaiwa_post(message, message.content)
     except Exception as e:

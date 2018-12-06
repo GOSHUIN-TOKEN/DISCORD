@@ -1,0 +1,15 @@
+{
+    "id": "397238348877529099",
+    "posthistory": [
+        "\u3060\u3081\u304b\u3053\u308c\u306f\u3060\u3081\u304b\u306a\u30fc",
+        "if memberinfo[\"omikuji_ticket_count\"] >= 5:\n   return None\n\n   memberinfo[\"omikuji_ticket_count\"] = memberinfo[\"omikuji_ticket_count\"] + 1\n   \n   # \u73fe\u5728\u306eunix\u30bf\u30a4\u30e0\u3092\u51fa\u3059\n\u300c\u300d",
+        "AirdropMemberInfo.py(153): async def make_one_member_paid(message, id):\nAirdropMemberInfo.py(169):   await report_error(message, \"An error occurred during make_one_member_paid.\")\nAirdropMemberInfo.py(196):   await make_one_member_paid(message, id)",
+        "<#517337384061501443> \n\u3060\u3081\u3067\u3059\u3088\u30fc",
+        "<#517337384061501443> \n\n\u3060\u3081\u3067\u3059\u3088\u30fc\n\u3042\u304b\u3093\u304b",
+        "<#517680764385492992> \n\n\u3042\u304b\u3093\u304b",
+        "<#517680764385492992> \n\n\u3042\u304b\u3093\u304b",
+        "<#517680764385492992> \n\n\u3042\u304b\u3093\u304b"
+    ],
+    "exp": 97,
+    "post_last_gettime": 1544023491
+}

@@ -54,7 +54,7 @@ def get_target_server_obj(target_server_id):
 # メッセージを投げた方が早い
 def get_bgm_cache_channel(server):
     for ch in server.channels:
-        if str(ch) == "音《一時記憶》":
+        if "音《一時記憶》" in str(ch):
             return ch
             
     return None

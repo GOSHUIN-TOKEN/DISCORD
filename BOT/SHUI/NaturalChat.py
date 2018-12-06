@@ -71,15 +71,12 @@ class NaturalChatMessage:
                         "nickname":norm_nickname,
                         "sex":"女",
                         "mode":self.lastMode,
-                        "t":""
+                        "t":"ojo"
                       }
                   },
                   "appRecvTime": datastr,
                   "appSendTime": datastr
             }
-
-            # print(payload)
-            # payload = {'botId':'Chatting','appKind':"Smart Phone"} #変更
 
             headers = {'Content-type': 'application/json'}
 
@@ -94,6 +91,8 @@ class NaturalChatMessage:
             
             if 'srtr' in self.lastMode:
                 self.lastMode = 'srtr'
+                response = random.choice([ "わたくし仕事中でございますから", "時間ができたら、お相手いたしますわ" ])
+                self.lastMode = 'dialog'
             else:
                 self.lastMode = 'dialog'
             
@@ -131,7 +130,7 @@ class NaturalChatMessage:
                 Kernel32.CloseHandle(mutex)
 
             print(RuntimeError)
-            return "今ディア調子が悪いみたい..."
+            return "何だかわたくし、体調がすぐれませんわ..."
 
 
     def get_normalized_nickname(self, nickname):
@@ -149,15 +148,15 @@ class NaturalChatMessage:
     def modify_response(self, response):
         #シリトリモードだと一人称が変になるので強引に修正
         if self.lastMode == 'srtr':
-            response = response.replace("ボクの勝ち", "ディアの勝ち")
-            response = response.replace("ぼくの勝ち", "ディアの勝ち")
-            response = response.replace("ボクの負け", "ディアの負け")
-            response = response.replace("ぼくの負け", "ディアの負け")
-            response = response.replace("ぼくから", "ディアから")
-            response = response.replace("ボクから", "ディアから")
+            response = response.replace("ボクの勝ち", "わたくしの勝ち")
+            response = response.replace("ぼくの勝ち", "わたくしの勝ち")
+            response = response.replace("ボクの負け", "わたくしの負け")
+            response = response.replace("ぼくの負け", "わたくしの負け")
+            response = response.replace("ぼくから", "わたくしから")
+            response = response.replace("ボクから", "わたくしから")
 
         # 年齢は共通で上書き
-        response = response.replace("年齢は、26歳", "年齢は、21歳")
+        # response = response.replace("年齢は、26歳", "年齢は、23歳")
         
         return response
 
@@ -166,13 +165,10 @@ class NaturalChatMessage:
         
     def decrement_appear_zatsudan_cnt(self, msg):
 
-        # ディアタンは自分の名前を呼ばれるとしばらくは雑談に登場を継続する
-        if "Diatan" in msg:
+        """
+        # 朱伊は自分の名前を呼ばれるとしばらくは雑談に登場を継続する
+        if "朱伊" in msg:
             self.appear_zatsudan_count = 5
-        if "ディアたん" in msg:
-            self.appear_zatsudan_count = 4
-        if "ディア" in msg:
-            self.appear_zatsudan_count = 3
             
         # すでに居ない時は、ごくまれに登場する
         if self.appear_zatsudan_count < -1:
@@ -182,6 +178,7 @@ class NaturalChatMessage:
         # しりとりモードになっている時は、登場状態を継続する
         if self.get_lastmode() == "srtr":
             self.appear_zatsudan_count = 3
+        """
         
         # １回引く
         self.appear_zatsudan_count = self.appear_zatsudan_count - 1
@@ -202,4 +199,4 @@ def CreateObject():
 
 
 def NaturalChattableChannelRegex():
-    return ["^雑談$", "^ディアたんと会話", "^ボットと雑談", "^★おみくじコーナー★"]
+    return ["^.*見習い巫女.*", "^.*おみくじ.*" ]
