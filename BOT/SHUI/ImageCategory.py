@@ -325,7 +325,7 @@ async def replay_image_message(message, word, isStrong = True):
     if isStrong:
         #await client.send_message(message.channel, word + " ですね！")
         await client.send_typing_message(message.channel, word + " ですね！")
-        imgmsg = sm4.get_naturalchat_mesasge(message, word)
+        imgmsg = await sm4.get_naturalchat_mesasge(message, word)
         #await client.send_message(message.channel, imgmsg)
         await client.send_typing_message(message.channel, imgmsg)
         await JapaneseOmikuji.get_omikuji_from_kaiwa(message, word)
@@ -333,7 +333,7 @@ async def replay_image_message(message, word, isStrong = True):
     else:
         # await client.send_message(message.channel, "もしかしたら " + word + " ...ですか？")
         await client.send_typing_message(message.channel, "もしかしたら " + word + " ...ですか？")
-        imgmsg = sm4.get_naturalchat_mesasge(message, word)
+        imgmsg = await sm4.get_naturalchat_mesasge(message, word)
         await client.send_typing_message(message.channel, imgmsg)
         await JapaneseOmikuji.get_omikuji_from_kaiwa(message, word)
 

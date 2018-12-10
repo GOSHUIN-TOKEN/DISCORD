@@ -58,21 +58,6 @@ async def on_ready():
     print('BOT-NAME :', client.user.name)
     print('BOT-ID   :', client.user.id)
     print('------')
-    
-    
-    _counter = 0
-    for svr in client.servers:
-        for mem in list(svr.members):
-            try:
-                _usrobj = await client.get_user_info(mem.id)
-                InviteCounter.USER_ID_LIST[mem.id] = _usrobj
-                _counter = _counter + 1
-                if _counter % 100 == 0:
-                    print("User Objectを" + str(_counter) + "名キャッシュしました")
-            except Exception as e:
-                t, v, tb = sys.exc_info()
-                print(traceback.format_exception(t,v,tb))
-                print(traceback.format_tb(e.__traceback__))
 
 
 sm1, sm2, sm3, sm4, sm5 = NaturalChat.CreateObject()
@@ -85,19 +70,48 @@ print(sm5)
 builtins.sm4 = sm4
 builtins.sm5 = sm5
 
-async def send_typing_message(channel, text):
-    text_len = len(text)
-    if text_len > 5:
-        text_len = text_len - 5
-    text_len = text_len / 30
-    if text_len >= 1.5:
-        text_len = 1.5
+async def my_background_task_send_typing():
+    pass
+    
+    """
+    global NEED_TYPING_CHANNEL_OBJ
 
-    await client.send_typing(channel)
-    await asyncio.sleep(text_len)
-    await client.send_message(channel, text)
+    await client.wait_until_ready()
 
-client.send_typing_message = send_typing_message
+    while not client.is_closed:
+        await asyncio.sleep(1)
+        
+        if NEED_TYPING_CHANNEL_OBJ:
+            await asyncio.sleep(2)
+            await client.send_typing(NEED_TYPING_CHANNEL_OBJ)
+            NEED_TYPING_CHANNEL_OBJ = None
+    """
+
+async def my_background_task_cache_usr_info():
+
+    await client.wait_until_ready()
+
+    _counter = 0
+    for svr in client.servers:
+
+        for mem in list(svr.members):
+            if client.is_closed:
+                break
+
+            try:
+                _usrobj = await client.get_user_info(mem.id)
+                InviteCounter.USER_ID_LIST[mem.id] = _usrobj
+                _counter = _counter + 1
+                if _counter % 100 == 0:
+                    print("User Objectを" + str(_counter) + "名キャッシュしました")
+
+            except Exception as e:
+                t, v, tb = sys.exc_info()
+                print(traceback.format_exception(t,v,tb))
+                print(traceback.format_tb(e.__traceback__))
+
+    print("my_background_task_cache_usr_info 完了")
+
 
 
 # メッセージを受信するごとに実行される
@@ -240,24 +254,23 @@ async def on_message(message):
                 if JapaneseOmikuji.is_permission_omikuji_condition(message):
                     # 2の方を使って会話
                     deme = await JapaneseOmikuji.say_embedded_omikuji_message(message)
+                    await client.send_typing(message.channel)
                     if deme == None:
-                        msg = sm2.get_naturalchat_mesasge(message)
+                        msg = await sm2.get_naturalchat_mesasge(message)
                     else:
-                        msg = sm2.get_naturalchat_mesasge(message, deme)
+                        msg = await sm2.get_naturalchat_mesasge(message, deme)
                     await client.send_message(message.channel, msg)
 
                 elif "見習い巫女" in str(message.channel):
                     await client.send_typing(message.channel)
-                    #result_pon = await asyncio.wait([client.send_typing(message.channel), abcc(message)])
-                    #print(result_pon)
-                    msg = sm1.get_naturalchat_mesasge(message)
+                    msg = await sm1.get_naturalchat_mesasge(message)
                     await client.send_message(message.channel, msg)
 
                 else:
                     pass
                     """
                     # 4の方を使って会話
-                    msg = sm4.get_naturalchat_mesasge(message)
+                    msg = await sm4.get_naturalchat_mesasge(message)
                     await client.send_message(message.channel, msg)
                     """
                     
@@ -283,6 +296,10 @@ async def on_member_join(member):
 @client.event
 async def on_member_remove(member):
     await InviteCounter.on_member_remove(member)
+
+client.loop.create_task(my_background_task_send_typing())
+client.loop.create_task(my_background_task_cache_usr_info())
+
 
 # APP(BOT)を実行
 client.run(BOT_TOKEN)

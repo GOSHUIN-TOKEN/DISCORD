@@ -36,7 +36,7 @@ class NaturalChatMessage:
         self.lastMode = "dialog"
         self.appear_zatsudan_count = 0
 
-    def get_naturalchat_mesasge(self, message, override_word = "", need_lock = True):
+    async def get_naturalchat_mesasge(self, message, override_word = "", need_lock = True):
         KEY = self.KEY
         
         mutex = None
@@ -101,7 +101,7 @@ class NaturalChatMessage:
                 # 必ず矯正してから
                 sm5.lastMode = "dialog"
                 # 一般の返答を挟む
-                response = sm5.get_naturalchat_mesasge(message, "", False)
+                response = await sm5.get_naturalchat_mesasge(message, "", False)
                 # メッセージのチャンネルに対応したキャッシュにたしこむ
                 if message.channel.id in ChatLevelUp.update_kaiwa_post_hasu:
                     ChatLevelUp.update_kaiwa_post_hasu[message.channel.id].append(response)

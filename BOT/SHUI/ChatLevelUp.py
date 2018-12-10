@@ -51,7 +51,7 @@ def createChatLevelUpTable():
         for lv in range(0, 201):
             LV_TO_EXP_LIST.append([lv, need_experiment_value(lv)])
 
-    print(LV_TO_EXP_LIST)
+    # print(LV_TO_EXP_LIST)
 
 
 def get_lv_from_exp(exp):
@@ -136,7 +136,7 @@ async def show_level_infomation(message, exp, default="会話レベル情報"):
         try:
             if message.content == "!rankinfo":
                 if paidinfo != None and "kaiwa_paid_lv" in paidinfo and "kaiwa_paid_amount" in paidinfo:
-                    if sum(paidinfo["kaiwa_paid_amount"].values()) > 0:
+                    if paidinfo["kaiwa_paid_amount"] != 0 and sum(paidinfo["kaiwa_paid_amount"].values()) > 0:
                         max_level_YM = max(paidinfo["kaiwa_paid_lv"].keys())
                         print(max_level_YM)
                         em.add_field(name="報酬を支払済みの Lv", value=str((paidinfo["kaiwa_paid_lv"][max_level_YM] // 5) * 5), inline=True)
@@ -162,11 +162,10 @@ async def show_level_infomation(message, exp, default="会話レベル情報"):
             int_cur_per_nex = 0
         if int_cur_per_nex > 200:
             int_cur_per_nex = 200
-        print("★" + str(int_cur_per_nex))
         em.add_field(name="経験値", value=str_cur_per_nex, inline=True)
         em.set_thumbnail(url=avator_url)
         
-        em.set_image(url="http://bdacoin.org/bot/levelup/image/level_up_image_{0:03d}.png".format(int_cur_per_nex))
+        em.set_image(url="http://goshuin.in/DISCORD/BOT/ChatLevelUp/image/level_up_image_{0:03d}.png".format(int_cur_per_nex))
     #        em.add_field(name="テスト", value=avator_url, inline=True)
 
         await client.send_message(message.channel, embed=em)
