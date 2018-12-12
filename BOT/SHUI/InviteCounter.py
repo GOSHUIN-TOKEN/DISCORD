@@ -19,14 +19,14 @@ import RegistEtherMemberInfo
 
 def get_welcome_count_channel(member):
     for ch in member.server.channels:
-        if "招待カウント閲覧" == str(ch):
+        if "🌳裏門🌳" == str(ch):
             return ch
             
     return None
 
 def get_welcome_channel(member):
     for ch in member.server.channels:
-        if "welcome" == str(ch):
+        if "🌳裏門🌳" == str(ch):
             return ch
             
     return None
@@ -347,7 +347,7 @@ async def invites_show_command(message, target_author):
         avator_url = avator_url.replace(".webp?", ".png?")
         em.set_thumbnail(url=avator_url)
         em.add_field(name="招待情報", value="<@" + owner_id + ">", inline=False)
-        em.add_field(name="招待評価点 (報酬対象)", value=str(round(invite_point, 2)) + " 点", inline=True)
+        em.add_field(name="招待評価点", value=str(round(invite_point, 2)) + " 点", inline=True)
         # em.add_field(name="現存招待数 (参考値)", value=str(invite_num) + " 個", inline=True)
         try:
             await client.send_message(message.channel, embed=em)
@@ -469,7 +469,7 @@ async def invitesraw_show_command(message, target_author):
         avator_url = avator_url.replace(".webp?", ".png?")
         em.set_thumbnail(url=avator_url)
         em.add_field(name="招待情報", value="<@" + owner_id + ">", inline=False)
-        em.add_field(name="招待評価点 (報酬対象)", value=str(round(invite_point, 2)) + " 点", inline=True)
+        em.add_field(name="招待評価点", value=str(round(invite_point, 2)) + " 点", inline=True)
         # em.add_field(name="現存招待数 (参考値)", value=str(invite_num) + " 個", inline=True)
         try:
             await client.send_message(message.channel, embed=em)

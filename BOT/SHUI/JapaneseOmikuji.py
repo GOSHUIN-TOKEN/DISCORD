@@ -259,7 +259,7 @@ async def get_embedded_omikuji_object(message):
     }
     
     # ハッシュからランダムで１つ選ぶ
-    rndstr = random.choice(["吉", "吉", "吉", "吉", "中吉", "中吉", "中吉", "中吉", "小吉", "小吉", "小吉", "小吉", "末吉", "末吉", "末吉", "末吉", "大吉", "ぴょん吉", "凶", "大凶"])
+    rndstr = random.choice(["吉", "吉", "吉", "吉", "中吉", "中吉", "中吉", "中吉", "小吉", "小吉", "小吉", "小吉", "末吉", "末吉", "末吉", "末吉", "大吉", "凶", "大凶"])
     
     # 問題があるメンバーであれば大吉は渡さない
     is_issue_member = is_this_member_issue_member(message.author)
@@ -300,7 +300,7 @@ async def get_embedded_omikuji_object(message):
                 print("幸運のおみくじを1枚引いた")
                 # 再度振りなおし
 
-                rndstr2 = random.choice(["吉", "吉", "吉", "吉", "中吉", "中吉", "中吉", "中吉", "小吉", "小吉", "小吉", "小吉", "末吉", "末吉", "末吉", "末吉", "大吉", "ぴょん吉", "凶", "大凶"])
+                rndstr2 = random.choice(["吉", "吉", "吉", "吉", "中吉", "中吉", "中吉", "中吉", "小吉", "小吉", "小吉", "小吉", "末吉", "末吉", "末吉", "末吉", "大吉", "凶", "大凶"])
                 # 問題があるメンバーは大吉にならない
                 if is_issue_member or member_exp < 300:
                     rndstr2 = random.choice(["吉", "吉", "吉", "吉", "中吉", "中吉", "中吉", "中吉", "小吉", "小吉", "小吉", "小吉", "末吉", "末吉", "末吉", "末吉", "凶", "大凶"])
@@ -323,7 +323,7 @@ async def get_embedded_omikuji_object(message):
         pyon_success = await RegistEtherMemberInfo.increment_one_member_omikuji_data(message, message.author.id)
         is_use_ticket = False
     # 
-    em = discord.Embed(title=" ", description="─────────\n" + message.author.display_name + " さんの運勢は ...", color=0xDEED33)
+    em = discord.Embed(title="本日のおみくじ", description= "<@" + str(message.author.id) + ">" + " さんの運勢は ...", color=0xDEED33)
 
     avator_url = client.user.default_avatar_url or client.user.default_avatar_url
     avator_url = avator_url.replace(".webp?", ".png?")
@@ -335,8 +335,8 @@ async def get_embedded_omikuji_object(message):
     elif pyon_success:
         em.add_field(name="幸運のおみくじ券（よだれ付き）", value="１枚追加", inline=False)
 
-    em.set_thumbnail(url="http://bdacoin.org/bot/omikuji/image/" + omikuji_lv + "_omkj.png")
-    em.set_image(url="http://bdacoin.org/bot/omikuji/image/" + omikuji_lv + ".png")
+    # em.set_thumbnail(url="http://goshuin.in/DISCORD/BOT/OmikujiJpn/image/" + omikuji_lv + "_omkj.png")
+    em.set_image(url="http://goshuin.in/DISCORD/BOT/OmikujiJpn/image/" + omikuji_lv + ".png")
     return em, omikuji_key
 
 

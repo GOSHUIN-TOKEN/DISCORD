@@ -50,10 +50,11 @@ async def decrement_one_member_omikuji_data(message, id):
     try:
         has = await has_member_data(message, id, False)
         if not has:
+            print("has_member_dataない")
             return None
 
         path = get_data_ticketinfo_path(message, id)
-        print(path)
+        print("get_data_ticketinfo_path" + path)
         with open(path, "r") as fr:
             memberinfo = json.load(fr)
 
@@ -83,10 +84,11 @@ async def increment_one_member_omikuji_data(message, id):
     try:
         has = await has_member_data(message, id, False)
         if not has:
+            print("has_member_dataない")
             return None
 
         path = get_data_ticketinfo_path(message, id)
-        print(path)
+        print("get_data_ticketinfo_path" + path)
         with open(path, "r") as fr:
             memberinfo = json.load(fr)
 
