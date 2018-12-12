@@ -90,7 +90,7 @@ def CalclatePaid(YEAR_MONTH):
             amount = 0
             with open("DataMemberPostInfo/" + path, "r") as fr:
                 postinfo = json.load(fr)
-                id = postinfo["id"]
+                id = postinfo["user_id"]
                 exp = postinfo["exp"]
                 lv = get_lv_from_exp(exp)
                 amount = get_coin_amount_from_lv(lv)

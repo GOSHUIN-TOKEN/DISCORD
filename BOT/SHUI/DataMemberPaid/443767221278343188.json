@@ -1,24 +1,13 @@
 {
-    "kaiwa_paid_lv": {
-        "201809": 4,
-        "201810": 4
-    },
+    "kaiwa_paid_lv": 0,
     "blog_paid_lv": 0,
     "invite_paid_lv": 0,
     "twitter_paid_lv": 0,
     "facebook_paid_lv": 0,
-    "kaiwa_paid_amount": {
-        "201809": 0,
-        "201810": 0
-    },
+    "kaiwa_paid_amount": 0,
     "blog_paid_amount": 0,
     "twitter_paid_amount": 0,
     "facebook_paid_amount": 0,
     "invite_paid_amount": 0,
-    "swap_amount": 860000,
-    "user_id": 443767221278343188,
-    "kaiwa_paid_exp": {
-        "201809": 922,
-        "201810": 922
-    }
+    "user_id": 443767221278343188
 }
