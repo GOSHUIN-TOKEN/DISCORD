@@ -323,13 +323,13 @@ async def get_embedded_omikuji_object(message):
         pyon_success = await RegistEtherMemberInfo.increment_one_member_omikuji_data(message, message.author.id)
         is_use_ticket = False
     # 
-    em = discord.Embed(title="本日のおみくじ", description= "<@" + str(message.author.id) + ">" + " さんの運勢は ...", color=0xDEED33)
+    em = discord.Embed(title="本日のおみくじ", description= "<@" + str(message.author.id) + ">", color=0xDEED33)
 
     avator_url = client.user.default_avatar_url or client.user.default_avatar_url
     avator_url = avator_url.replace(".webp?", ".png?")
     # em.set_author(name='朱伊', icon_url=avator_url)
     
-    em.add_field(name=omikuji_key + "です!!", value="─────────", inline=False)
+    # em.add_field(name=omikuji_key + "です!!", value="** **", inline=False)
     if is_use_ticket:
         em.add_field(name="幸運のおみくじ券", value="１枚使用", inline=False)
     elif pyon_success:
@@ -337,6 +337,7 @@ async def get_embedded_omikuji_object(message):
 
     # em.set_thumbnail(url="http://goshuin.in/DISCORD/BOT/OmikujiJpn/image/" + omikuji_lv + "_omkj.png")
     em.set_image(url="http://goshuin.in/DISCORD/BOT/OmikujiJpn/image/" + omikuji_lv + ".png")
+    em.set_footer(text=omikuji_key + " でございます。")
     return em, omikuji_key
 
 
@@ -370,11 +371,11 @@ async def get_omikuji_from_kaiwa(message, override_message = ""):
             # 実際に枚数が増えているならば
             if success != None:
                 if rnd % 3 == 0:
-                    await client.send_message(message.channel, "<@" + message.author.id + "> さん、これ落ちてましたよ！")
+                    await client.send_message(message.channel, "<@" + message.author.id + "> さん、これ落ちてましたわよ？")
                 if rnd % 3 == 1:
-                    await client.send_message(message.channel, "このおみくじ券、<@" + message.author.id + "> さんのですか？")
+                    await client.send_message(message.channel, "このおみくじ券、<@" + message.author.id + "> さんのでございますか？")
                 if rnd % 3 == 2:
-                    await client.send_message(message.channel, "<@" + message.author.id + "> さん、おみくじ券いかがですか～")
+                    await client.send_message(message.channel, "<@" + message.author.id + "> さん、おみくじ券いかがでございますか～")
                     
                 em = discord.Embed(title=" ", description=" ", color=0xDEED33)
                 em.add_field(name="幸運のおみくじ券", value="１枚追加", inline=False)
