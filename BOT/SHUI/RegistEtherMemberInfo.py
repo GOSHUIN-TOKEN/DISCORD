@@ -333,6 +333,28 @@ async def show_another_member_data(message):
         pass
 
 
+async def show_another_ticket_data(message):
+    print("another_ticket_data_show_command")
+    try:
+        m = re.search("^!ticketinfo <@(\d+?)>$", message.content)
+        if m:
+            print("マッチ")
+            targetg_member_id = m.group(1)
+            if targetg_member_id:
+                print("サーバー")
+                svr = message.author.server
+                target_author = svr.get_member(targetg_member_id)
+                print("おーさー" + str(target_author))
+                if target_author:
+                    await show_one_ticket_data(message, target_author.id)
+
+    except Exception as e:
+        t, v, tb = sys.exc_info()
+        print(traceback.format_exception(t,v,tb))
+        print(traceback.format_tb(e.__traceback__))
+        pass
+
+
 
 async def show_one_member_data(message, id):
     try:
@@ -379,6 +401,46 @@ async def show_one_member_data(message, id):
     return False
 
 
+async def show_one_ticket_data(message, id):
+    try:
+        path = get_data_ticketinfo_path(message, id)
+        has = await has_member_data(message, id, True)
+        print("メンバー情報がある？" + str(has))
+        if not has:
+            return
+            
+        print(path)
+        with open(path, "r") as fr:
+            ticketinfo = json.load(fr)
+
+        em = discord.Embed(title="", description="", color=0xDEED33)
+        author = message.server.get_member(id)
+        avator_url = None
+        if author:
+            avator_url = author.avatar_url or author.default_avatar_url
+        else:
+            avator_url = message.author.default_avatar_url
+        print(avator_url)
+        avator_url = avator_url.replace(".webp?", ".png?")
+        em.set_thumbnail(url=avator_url)
+        em.add_field(name="チケット情報", value="<@" + id + ">", inline=False)
+        em.add_field(name="幸運のおみくじ券", value=str(ticketinfo["omikuji_ticket_count"]) + " 枚", inline=False)
+
+
+        try:
+            await client.send_message(message.channel, embed=em)
+        except:
+            print(sys.exc_info())
+
+        return True
+
+    except:
+        await report_error(message, "show_one_member_data中にエラー")
+        await report_error(message, sys.exc_info())
+    
+    return False
+
+
 
 def is_show_one_member_data_condition(message):
     msg = str(message.content).strip()
@@ -391,6 +453,20 @@ def is_show_one_member_data_condition(message):
 def is_show_another_member_data_condition(message):
     msg = str(message.content).strip()
     if re.match("^!memberinfo <@\d+?>$", msg):
+        return True
+
+
+def is_show_one_ticket_data_condition(message):
+    msg = str(message.content).strip()
+    if "!ticketinfo" == msg:
+        return True
+
+    return False
+
+
+def is_show_another_ticket_data_condition(message):
+    msg = str(message.content).strip()
+    if re.match("^!ticketinfo <@\d+?>$", msg):
         return True
 
 
