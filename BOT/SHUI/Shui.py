@@ -160,8 +160,18 @@ async def on_message(message):
         return
 
     # メンバー情報の表示
+    if RegistEtherMemberInfo.is_show_another_ticket_data_condition(message):
+        await RegistEtherMemberInfo.show_another_ticket_data(message)
+        return
+
+    # メンバー情報の表示
     if RegistEtherMemberInfo.is_show_one_member_data_condition(message):
         await RegistEtherMemberInfo.show_one_member_data(message, message.author.id)
+        return
+
+    # チケット情報表示
+    if RegistEtherMemberInfo.is_show_one_ticket_data_condition(message):
+        await RegistEtherMemberInfo.show_one_ticket_data(message, message.author.id)
         return
 
     # イーサアドレスの登録
