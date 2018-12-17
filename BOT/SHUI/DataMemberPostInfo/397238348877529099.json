@@ -1,5 +1,9 @@
 {
     "user_id": "397238348877529099",
-    "posthistory": [],
-    "exp": 0
+    "posthistory": [
+        "!ticket",
+        "!-!clear"
+    ],
+    "exp": 15,
+    "post_last_gettime": 1544884331
 }

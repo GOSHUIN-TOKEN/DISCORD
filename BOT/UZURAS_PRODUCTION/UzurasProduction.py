@@ -86,10 +86,16 @@ async def on_ready():
     print('BOT-ID   :', client.user.id)
     print('------')
 
+
+# Uzurasを監視するためのバックグラウンドタスク
+async def my_background_task_watching_uzuras():
+
+    await client.wait_until_ready()
+
     uzuras_info = UzurasInfo()
     uzuras_act_info = UzurasActInfo(uzuras_info)
 
-    while(True):
+    while not client.is_closed:
 
         if uzuras_info.member_obj:
             if uzuras_info.member_obj.status == discord.Status.online:
@@ -98,7 +104,7 @@ async def on_ready():
                 await client.change_nickname(uzuras_act_info.member_obj, "鶉･演出《鶉休眠》")
 
         await asyncio.sleep(5)
-
+    
 
 # 現在の季節のディレクトリ
 def GetCurrentSeasonDirectory():
@@ -299,6 +305,7 @@ async def on_message(message):
 
 
 
+client.loop.create_task(my_background_task_watching_uzuras())
 
 # APP(BOT)を実行
 client.run(BOT_TOKEN)
