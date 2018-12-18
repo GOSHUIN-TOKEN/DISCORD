@@ -144,8 +144,14 @@ def MakeRainImage(message, coinname, tip, user_num):
                 break
             RideCoinImage(coin_image_path, base_image)
     else:
+        coin_image_path = GetCoinImageRelativePath("_UNKNOWN")
+        if os.path.exists(coin_image_path):
+            for num in range(0, 10):
+                if num > user_num:
+                    break
+                RideCoinImage(coin_image_path, base_image)
+
         print("ない")
-        return None, None, None
 
     # 現在のunixタイムを出す
     unix = GetIntOfNowTimeStamp()
