@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2018 Akitsugu Komiyama
+# under the GPL v3 License.
+# 
+
 import unicodedata
 
 # 該当テキストを等幅フォントに置き換えた際の幅を得る

@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2018 Akitsugu Komiyama
+# under the GPL v3 License.
+#
+
 import unicodedata
 import builtins
 
@@ -41,7 +47,7 @@ LV_TO_EXP_LIST = []
 def createChatLevelUpTable():
     if len(LV_TO_EXP_LIST) ==0:
         # lv200まで埋める
-        for lv in range(0, 201):
+        for lv in range(0, 101):
             LV_TO_EXP_LIST.append([lv, need_experiment_value(lv)])
 
     # print(LV_TO_EXP_LIST)

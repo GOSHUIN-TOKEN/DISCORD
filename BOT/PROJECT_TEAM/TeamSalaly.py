@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2018 Akitsugu Komiyama
+# under the GPL v3 License.
+# 
 import requests
 import sys
 import re
@@ -26,8 +31,8 @@ def get_btc_jpy():
 def get_bda_num(msg):
     btc_jpy = get_btc_jpy()
     input_jpy = get_input_jpy(msg)
-    bda_sat = 0.00000005
-    
+    bda_sat = 0.000000030 # 30 sat 相当
+
     return input_jpy / (btc_jpy * bda_sat)
 
 def is_permission_teamhousyu_condition(message):
@@ -39,7 +44,7 @@ def is_permission_teamhousyu_condition(message):
 
 async def say_message(message):
     ret = get_bda_num(message.content)
-    await client.send_message(message.channel, str(int(ret)) + "枚 BDA(ERC) くれくれ♪")
+    await client.send_message(message.channel, str(int(ret)) + "枚 GSIN(ERC) くれくれ♪")
 
 
 # テスト
