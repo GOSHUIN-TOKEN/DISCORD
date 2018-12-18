@@ -226,15 +226,6 @@ def DeleteOldImageFile(temp_dir, unix):
                 print(sys.exc_info())
     return unix
 
-# チャンネルのメッセージの削除を試みる
-async def DeleteChannelAllMessage(message):
-    try:
-        tmp = await client.send_message(message.channel, 'チャンネルのメッセージを削除しています')
-        async for msg in client.logs_from(message.channel):
-            await client.delete_message(msg)
-    except:
-        print("削除中にエラーが発生しました")
-
 def PrintMessageAuthorAvatorUrl(message):
     avator_url = message.author.avatar_url or message.author.default_avatar_url
     avator_url = avator_url.replace(".webp?", ".png?")

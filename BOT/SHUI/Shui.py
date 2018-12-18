@@ -113,6 +113,15 @@ async def my_background_task_cache_usr_info():
     print("my_background_task_cache_usr_info 完了")
 
 
+# チャンネルのメッセージの削除を試みる
+async def DeleteChannelAllMessage(message):
+    try:
+        tmp = await client.send_message(message.channel, 'チャンネルのメッセージを削除しています')
+        async for msg in client.logs_from(message.channel):
+            await client.delete_message(msg)
+    except:
+        print("削除中にエラーが発生しました")
+
 
 # メッセージを受信するごとに実行される
 @client.event
@@ -147,6 +156,13 @@ async def on_message(message):
                 return
     except:
         pass
+
+    # こみやんま#0314
+    if message.author.id == "397238348877529099":
+        # そのチャンネルに存在するメッセージを全て削除する
+        if message.content.startswith('!-!-!clear'):
+            await DeleteChannelAllMessage(message)
+            return
 
 
     # 許可されないWalletアドレスのメッセージ
