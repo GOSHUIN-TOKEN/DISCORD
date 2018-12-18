@@ -99,9 +99,9 @@ async def my_background_task_watching_uzuras():
 
         if uzuras_info.member_obj:
             if uzuras_info.member_obj.status == discord.Status.online:
-                await client.change_nickname(uzuras_act_info.member_obj, "鶉･演出《鶉生息》")
+                await client.change_nickname(uzuras_act_info.member_obj, "鶉･演出《鶉･起》")
             else:
-                await client.change_nickname(uzuras_act_info.member_obj, "鶉･演出《鶉休眠》")
+                await client.change_nickname(uzuras_act_info.member_obj, "鶉･演出《鶉･眠》")
 
         await asyncio.sleep(5)
     
@@ -250,13 +250,6 @@ async def on_message(message):
     # BOTとメッセージの送り主が同じ人なら処理しない
     if client.user == message.author:
         return
-
-        # こみやんま#0314
-    if message.author.id == "397238348877529099":
-        # そのチャンネルに存在するメッセージを全て削除する
-        if message.content.startswith('!-!-!clear'):
-            await DeleteChannelAllMessage(message)
-            return
 
     try:
         # 送信主がBOTなら処理しない
