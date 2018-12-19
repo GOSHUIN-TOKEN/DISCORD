@@ -338,8 +338,8 @@ async def get_embedded_omikuji_object(message):
     elif pyon_success:
         em.add_field(name="幸運のおみくじ券（よだれ付き）", value="１枚追加", inline=False)
 
-    # em.set_thumbnail(url="http://discord.goshuin.in/DISCORD/BOT/OmikujiJpn/image/" + omikuji_lv + "_omkj.png")
-    em.set_image(url="http://discord.goshuin.in/DISCORD/BOT/OmikujiJpn/image/" + omikuji_lv + ".png")
+    # em.set_thumbnail(url="http://discord.goshuin.in/BOT/OmikujiJpn/image/" + omikuji_lv + "_omkj.png")
+    em.set_image(url="http://discord.goshuin.in/BOT/OmikujiJpn/image/" + omikuji_lv + ".png")
     em.set_footer(text=omikuji_key + " でございます。")
     return em, omikuji_key
 

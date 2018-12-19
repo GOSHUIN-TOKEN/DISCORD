@@ -169,7 +169,7 @@ async def show_level_infomation(message, exp, default="会話レベル情報"):
         em.add_field(name="経験値", value=str_cur_per_nex, inline=True)
         em.set_thumbnail(url=avator_url)
         
-        em.set_image(url="http://discord.goshuin.in/DISCORD/BOT/ChatLevelUp/image/level_up_image_{0:03d}.png".format(int_cur_per_nex))
+        em.set_image(url="http://discord.goshuin.in/BOT/ChatLevelUp/image/level_up_image_{0:03d}.png".format(int_cur_per_nex))
     #        em.add_field(name="テスト", value=avator_url, inline=True)
 
         await client.send_message(message.channel, embed=em)
