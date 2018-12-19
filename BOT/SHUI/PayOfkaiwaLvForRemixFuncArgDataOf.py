@@ -3,6 +3,9 @@
 # Copyright (C) 2018 Akitsugu Komiyama
 # under the GPL v3 License.
 #
+
+
+
 import re
 import json
 import os
@@ -31,8 +34,13 @@ def CalclateERCPaid(YEAR_MONTH):
                     paidinfo = json.load(fr2)
                     if paidinfo["kaiwa_paid_amount"] != 0:
                         amount = paidinfo["kaiwa_paid_amount"][YEAR_MONTH]
-                        if "201809" in paidinfo["kaiwa_paid_amount"]:
-                            amount = amount - paidinfo["kaiwa_paid_amount"]["201809"]
+
+                        # キーの数値的maxは、最後の支払状況を指すため。
+                        if isinstance(paidinfo["kaiwa_paid_amount"], dict):
+                            # 最後に支払った月を得る
+                            last_month = max(paidinfo["kaiwa_paid_amount"].keys())
+                            # その最後の支払いを引く
+                            amount = amount - paidinfo["kaiwa_paid_amount"][last_month]
 
                         if amount > 0:
                             print_ethadd.append(eth)
