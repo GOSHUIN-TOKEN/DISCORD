@@ -46,6 +46,10 @@ async def start_bgm(message, bgm_path):
 
     channel = get_bgm_channel(message.channel.server)
 
+    # if message.author.voice_channel.id != channel.id:
+    #    pass 
+
+
     voice = None
     voice_client = None
     try:
