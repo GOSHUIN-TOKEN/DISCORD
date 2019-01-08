@@ -287,7 +287,7 @@ async def on_message(message):
                     if deme == None:
                         msg = await sm2.get_naturalchat_mesasge(message)
                     else:
-                        msg = await sm2.get_naturalchat_mesasge(message, "おみくじが " + deme + " です。")
+                        msg = await sm2.get_naturalchat_mesasge(message, deme)
                     await client.send_message(message.channel, msg)
 
                 elif "見習い巫女" in str(message.channel):
