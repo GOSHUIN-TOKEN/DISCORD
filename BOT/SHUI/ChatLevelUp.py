@@ -15,6 +15,8 @@ import os
 import sys, datetime, time
 import traceback
 import discord
+import emoji
+
 import RegistEtherMemberInfo
 
 import EastAsianWidthCounter
@@ -257,6 +259,36 @@ def hanpukuword_to_onceword(text):
     else:
         return text
 
+# 絵文字を除去
+def remove_emoji(src_str):
+    ret_str = ""
+
+    # 正規表現パターンを構築
+    emoji_pattern = re.compile("["
+            u"\U0001F600-\U0001F64F"
+            u"\U0001F300-\U0001F5FF"
+            u"\U0001F680-\U0001F6FF"
+            u"\U0001F1E0-\U0001F1FF"
+                            "]+", flags=re.UNICODE)
+
+    ret_str = emoji_pattern.sub(r':emj:', src_str)
+    #for c in src_str:
+    #    if c in emoji.UNICODE_EMOJI:
+    #        ret_str += ":emj:"
+    #    else:
+    #        ret_str += c
+
+    rgx = r'<[a-z0-9]?:[a-zA-Z0-9_\-]+:[0-9]{5,30}>'
+    while(True):
+        ma = re.search(rgx, ret_str)
+        if ma:
+            ret_str = re.sub(rgx, ":emj:", ret_str)
+        else:
+            break
+
+    ret_str = ret_str.replace("\n", "")
+    return ret_str
+
 # 投稿を各チャンネルで保持
 update_kaiwa_post_hasu = {}
 
@@ -285,6 +317,7 @@ async def update_one_kaiwa_post_data(message):
         print("元:" + text)
         try:
             # まぁ5回ぐらいでええやろ…
+            text = remove_emoji(text)
             for iix in range(0, 6):
                 text = hanpukuword_to_onceword(text)
         except:
@@ -295,19 +328,19 @@ async def update_one_kaiwa_post_data(message):
         minimum_coef = 1
         # 過去の20投稿との比較で最低の係数を出す（類似したものがあるほど係数が低くなる)
         for hist in postinfo["posthistory"]:
-            temp_coef = 1 - get_sequence_matcher_coef(hist, text)
+            temp_coef = 1 - get_sequence_matcher_coef(hist.replace("\n", ""), text.replace("\n", ""))
             # print("どうか:" + str(temp_coef) + hist + ", " + text)
             if temp_coef < minimum_coef:
                 minimum_coef = temp_coef
 
         # 過去の該当チャンネルの履歴との比較
         for hist in update_kaiwa_post_hasu[message.channel.id]:
-            temp_coef = 1 - get_sequence_matcher_coef(hist, text)
+            temp_coef = 1 - get_sequence_matcher_coef(hist.replace("\n", ""), text.replace("\n", ""))
             # print("どうか:" + str(temp_coef) + hist + ", " + text)
             if temp_coef < minimum_coef:
                 minimum_coef = temp_coef
 
-        # print("最低係数:" + str(minimum_coef))
+        print("最低係数:" + str(minimum_coef))
 
         base_experience = 60
         add_experience = int(minimum_coef * base_experience)
@@ -342,8 +375,8 @@ async def update_one_kaiwa_post_data(message):
             total_seconds = tdelta.total_seconds()
             print("差分:" + str(total_seconds))
             if "見ちゃイヤ" in message.channel.name:
-                if add_experience > total_seconds/15:
-                    print("差分タイム/15へと抑え込み:" + str(total_seconds/15)) 
+                if add_experience > total_seconds/10:
+                    print("差分タイム/15へと抑え込み:" + str(total_seconds/10)) 
                     add_experience = int(total_seconds/8)
             # 普通のチャンネル
             else:

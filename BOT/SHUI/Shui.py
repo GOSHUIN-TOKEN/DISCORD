@@ -34,6 +34,7 @@ import ChatLevelUp
 import InviteCounter
 
 import threading
+from typing import List, NamedTuple
 
 # 上記で取得したアプリのトークンを入力
 
@@ -128,7 +129,7 @@ async def DeleteChannelAllMessage(message):
 
 # メッセージを受信するごとに実行される
 @client.event
-async def on_message(message):
+async def on_message(message: discord.Message):
 
     try:
         print(message.channel.id)

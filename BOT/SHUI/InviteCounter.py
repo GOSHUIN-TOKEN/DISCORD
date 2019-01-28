@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2018 Akitsugu Komiyama
 # under the GPL v3 License.
