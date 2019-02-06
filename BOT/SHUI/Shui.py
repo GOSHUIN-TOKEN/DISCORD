@@ -174,22 +174,22 @@ async def on_message(message: discord.Message):
     if is_delete:
         return
 
-    # メンバー情報の表示
+    # 他メンバーの情報の表示
     if RegistEtherMemberInfo.is_show_another_member_data_condition(message):
         await RegistEtherMemberInfo.show_another_member_data(message)
         return
 
-    # メンバー情報の表示
+    # 他メンバーのチケット情報の表示
     if RegistEtherMemberInfo.is_show_another_ticket_data_condition(message):
         await RegistEtherMemberInfo.show_another_ticket_data(message)
         return
 
-    # メンバー情報の表示
+    # 自分の情報の表示
     if RegistEtherMemberInfo.is_show_one_member_data_condition(message):
         await RegistEtherMemberInfo.show_one_member_data(message, message.author.id)
         return
 
-    # チケット情報表示
+    # 自分のチケット情報表示
     if RegistEtherMemberInfo.is_show_one_ticket_data_condition(message):
         await RegistEtherMemberInfo.show_one_ticket_data(message, message.author.id)
         return
@@ -199,7 +199,7 @@ async def on_message(message: discord.Message):
         await RegistEtherMemberInfo.regist_one_member_data(message, message.author.id)
         return
 
-    # メンバー情報の表示
+    # エアドロのメンバー情報の表示
     if AirdropMemberInfo.is_show_one_member_data_condition(message):
         await AirdropMemberInfo.show_one_member_data(message, message.author.id)
         return
@@ -225,12 +225,12 @@ async def on_message(message: discord.Message):
         await InviteCounter.another_invitesraw_show_command(message)
         return
 
-    # 招待数表示コマンド
+    # 他メンバーの招待数表示コマンド
     if InviteCounter.is_another_invites_show_command_condition(message.content):
         await InviteCounter.another_invites_show_command(message)
         return
 
-    # 招待数表示コマンド
+    # 自分の招待数表示コマンド
     if InviteCounter.is_invites_show_command_condition(message.content):
         await InviteCounter.invites_show_command(message, message.author)
         return
