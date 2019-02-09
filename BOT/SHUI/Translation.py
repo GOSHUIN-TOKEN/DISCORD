@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+
+# Copyright (C) 2018 Akitsugu Komiyama
+# under the GPL v3 License.
+#
+
 import os
 import json
 import urllib.request
@@ -7,7 +12,7 @@ def get_gas_api_key() -> str:
     # 本番用のみが有効なら本番用の接続トークンを返す
     return os.getenv("GOOGLE_SCRIPT_TRANSLATION_API", r'')
 
-
+# 少し遅いが長さ制限がほぼない
 def TranslationMethodPost(text: str, src_lang: str, dst_lang: str) -> str:
     headers: str = {"Content-Type": "application/json"}
 
@@ -30,6 +35,7 @@ def TranslationMethodPost(text: str, src_lang: str, dst_lang: str) -> str:
     return ""
 
 
+# 少し早いがエンコードされた状態でURL含めて2000文字ほどという制限がある。
 def TranslationMethodGet(text: str, src_lang: str, dst_lang: str) -> str:
     text = urllib.parse.quote(text)
 
@@ -51,8 +57,3 @@ if __name__ == "__main__":
     print(result)
     #result = TranslationMethodGet("りんご", "ja", "en")
     #print(result)
-
-
-
-
-
