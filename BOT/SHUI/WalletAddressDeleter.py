@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2018 Akitsugu Komiyama
 # under the GPL v3 License.
-# 
+#
 
 # 正規表現
 import re
@@ -15,24 +15,24 @@ nopermit_channnel_of_ether_address = ["^雑談$", "^english.$", "ルーレット
 
 # Wavesウォレットのアドレスのパターン
 def is_message_waves_pattern(message):
-    message = message.strip();
+    message = message.strip()
     if len(message) != 35:
         return False
 
-    if re.match("^(\s*)3P[0-9a-zA-Z]+(\s*)$", message):
+    if re.match(r"^(\s*)3P[0-9a-zA-Z]+(\s*)$", message):
         return True
-    
+
     return False
-    
+
 # Etherウォレットのアドレスのパターン
 def is_message_ether_pattern(message):
-    message = message.strip();
+    message = message.strip()
     if len(message) != 42:
         return False
 
-    if re.match("^(\s*)0x[0-9a-zA-Z]+(\s*)$", message):
+    if re.match(r"^(\s*)0x[0-9a-zA-Z]+(\s*)$", message):
         return True
-    
+
     return False
 
 
@@ -70,5 +70,5 @@ async def violation_wallet_address_message(message):
             await client.delete_message(message)
             is_delete = True
             # await client.send_message(message.channel, "Etherアドレス検知。アドレス投稿が許されないチャンネルです")
-            
+
     return is_delete

@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2018 Akitsugu Komiyama
 # under the GPL v3 License.
-# 
+#
 
 import builtins
 
@@ -76,7 +76,7 @@ builtins.sm5 = sm5
 
 async def my_background_task_send_typing():
     pass
-    
+
     """
     global NEED_TYPING_CHANNEL_OBJ
 
@@ -84,7 +84,7 @@ async def my_background_task_send_typing():
 
     while not client.is_closed:
         await asyncio.sleep(1)
-        
+
         if NEED_TYPING_CHANNEL_OBJ:
             await asyncio.sleep(2)
             await client.send_typing(NEED_TYPING_CHANNEL_OBJ)
@@ -142,7 +142,7 @@ async def on_message(message: discord.Message):
 
     try:
         # 送信主がBOTなら処理しない
-        roles = message.author.roles;
+        roles = message.author.roles
         for r in roles:
             if r.name == "BOT":
                 return
@@ -264,7 +264,7 @@ async def on_message(message: discord.Message):
         print("例外:is_analyze_condition")
         pass
     """
-    
+
     # 会話からおみくじを得る
     try:
         await JapaneseOmikuji.get_omikuji_from_kaiwa(message)
@@ -303,7 +303,7 @@ async def on_message(message: discord.Message):
                     msg = await sm4.get_naturalchat_mesasge(message)
                     await client.send_message(message.channel, msg)
                     """
-                    
+
     try:
         await ChatLevelUp.push_kaiwa_post(message, message.content)
     except Exception as e:
@@ -311,11 +311,11 @@ async def on_message(message: discord.Message):
         print(traceback.format_exception(t,v,tb))
         print(traceback.format_tb(e.__traceback__))
         print(sys.exc_info())
-        
+
     if message.author.id == "397238348877529099":
         if message.content == "!all_level_roles":
             await ChatLevelUp.all_member_add_level_role(message)
-            
+
 
 
 

@@ -26,7 +26,7 @@ async def report_error(message, error_msg):
     avator_url = client.user.default_avatar_url or client.user.default_avatar_url
     avator_url = avator_url.replace(".webp?", ".png?")
     em.set_author(name='Shui', icon_url=avator_url)
-    
+
     em.add_field(name="返信相手(Reply)", value= "<@" + message.author.id + ">", inline=False)
     em.add_field(name="エラー(Error)", value=error_msg, inline=False)
     try:
@@ -61,15 +61,15 @@ async def update_one_member_data(message, address, id):
         json_data = json.dumps(memberinfo, indent=4)
         with open(path, "w") as fw:
             fw.write(json_data)
-            
+
         await update_all_member_data(message, memberinfo)
-            
+
         return True
 
     except:
         await report_error(message, "Error while creating MemberData data.")
         await report_error(message, sys.exc_info())
-    
+
     return False
 
 
@@ -85,7 +85,7 @@ async def is_has_address(message, address, id):
             # 別人なのに同一のイーサアドレスが投稿されようとしている
             if memberinfo["eth_address"] == address and int(memberinfo["user_id"]) != int(id):
                 return True
-            
+
         return False
 
     except Exception as e:
@@ -94,7 +94,7 @@ async def is_has_address(message, address, id):
         print(traceback.format_tb(e.__traceback__))
         await report_error(message, "Error while judge is_has_address.")
         await report_error(message, sys.exc_info())
-    
+
     return False
 
 
@@ -112,13 +112,13 @@ async def update_all_member_data(message, memberinfo):
         json_data = json.dumps(allinfo, indent=4)
         with open(path, "w") as fw:
             fw.write(json_data)
-            
+
         return True
 
     except:
         await report_error(message, "Error while creating Update_all_member_data.")
         await report_error(message, sys.exc_info())
-    
+
     return False
 
 
@@ -129,24 +129,24 @@ async def make_one_member_data(message, address, id):
         if has_address:
             await report_error(message, "そのイーサアドレスは別アカウントの人に登録されています。\n(That Ether wallet address is registered by another account.")
             return False
-            
+
         memberinfo = {
             "eth_address": "",
             "user_id": 0
         }
-        
+
         memberinfo["user_id"] = id
 
         memberinfo["eth_address"] = address
-        
+
         path = get_data_memberinfo_path(message, id)
         print(path)
         json_data = json.dumps(memberinfo, indent=4)
         with open(path, "w") as fw:
             fw.write(json_data)
-            
+
         await update_all_member_data(message, memberinfo)
-            
+
         return True
     except:
         await report_error(message, "An error occurred during make_one_member_data.")
@@ -160,9 +160,9 @@ async def make_one_member_paid(message, id):
             "airdrop_201809": 0,
             "user_id": 0
         }
-        
+
         paidinfo["user_id"] = id
-        
+
         path = get_data_memberpaid_path(message, id)
         print(path)
         json_data = json.dumps(paidinfo, indent=4)
@@ -172,7 +172,7 @@ async def make_one_member_paid(message, id):
     except:
         await report_error(message, "An error occurred during make_one_member_paid.")
         await report_error(message, sys.exc_info())
-    
+
     return False
 
 
@@ -223,7 +223,7 @@ def get_ether_regist_channel(message):
     for ch in message.channel.server.channels:
         if "regist-airdrop-eth" in str(ch):
             return ch
-            
+
     return None
 
 
@@ -235,7 +235,7 @@ async def show_one_member_data(message, id):
         print("メンバー情報がある？" + str(has))
         if not has:
             return
-            
+
         print(path)
         with open(path, "r") as fr:
             memberinfo = json.load(fr)
@@ -264,7 +264,7 @@ async def show_one_member_data(message, id):
     except:
         await report_error(message, "Error in show_one_member_data.")
         await report_error(message, sys.exc_info())
-    
+
     return False
 
 
@@ -287,4 +287,4 @@ async def has_member_data(message, id, withMessage):
         return False
     else:
         return True
-        
+

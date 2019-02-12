@@ -66,21 +66,21 @@ def get_all_member_id_and_ether_bind_data():
         except:
             print("Error")
             pass
-    
+
     return dict_data
 
 
 def get_member_top_holder_info():
     html = get_bdr_top_holders_html(1)
     # print(html)
-    ret_list = re.findall("<tr><td>(\d+)</td><td><span><a href='/token/0xf6caa4bebd8fab8489bc4708344d9634315c4340\?a=(0x.+?)' target='_parent'>0x.+?</a></span></td><td>(\d+)</td><td>\d+%</td></tr>", html)
+    ret_list = re.findall(r"<tr><td>(\d+)</td><td><span><a href='/token/0xf6caa4bebd8fab8489bc4708344d9634315c4340\?a=(0x.+?)' target='_parent'>0x.+?</a></span></td><td>(\d+)</td><td>\d+%</td></tr>", html)
     # イーサアドレスを小文字に統一する
     for ix in range(0, len(ret_list)):
         ret_list[ix] = [int(ret_list[ix][0].lower()), ret_list[ix][1].lower(), float(ret_list[ix][2].lower())]
     # イーサアドレス(小文字)がキー、値がユーザーIDの辞書を取得
     dict_data = get_all_member_id_and_ether_bind_data()
-    
-    
+
+
     top_holder_info = {}
     # ホルダー一覧で
     for holder in ret_list:

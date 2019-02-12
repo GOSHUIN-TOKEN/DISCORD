@@ -13,7 +13,7 @@ def get_gas_api_key() -> str:
     return os.getenv("GOOGLE_SCRIPT_TRANSLATION_API", r'')
 
 # 少し遅いが長さ制限がほぼない
-def TranslationMethodPost(text: str, src_lang: str, dst_lang: str) -> str:
+def translation_method_post(text: str, src_lang: str, dst_lang: str) -> str:
     headers: str = {"Content-Type": "application/json"}
 
     script_url: str = r"https://script.google.com/macros/s/" + get_gas_api_key() + "/exec"
@@ -36,7 +36,7 @@ def TranslationMethodPost(text: str, src_lang: str, dst_lang: str) -> str:
 
 
 # 少し早いがエンコードされた状態でURL含めて2000文字ほどという制限がある。
-def TranslationMethodGet(text: str, src_lang: str, dst_lang: str) -> str:
+def translation_method_get(text: str, src_lang: str, dst_lang: str) -> str:
     text = urllib.parse.quote(text)
 
     script_url: str = r"https://script.google.com/macros/s/" + get_gas_api_key() + "/exec"

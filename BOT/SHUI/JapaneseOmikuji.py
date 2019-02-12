@@ -80,7 +80,7 @@ def is_permission_omikuji_condition(message):
     ch = str(message.channel)
     if ch in ["🔖おみくじ"]:
        return True
-       
+
     return False
 
 
@@ -111,11 +111,11 @@ def is_omikuji_command(text):
         'みくじお願い', 'みくじをお願い',
         'みくじおねがい', 'みくじをおねがい',
     ]
-    
+
     for ok_word in okword_list:
         if ok_word in text:
             return True
-    
+
     return False
 
 
@@ -126,7 +126,7 @@ def get_date_omikuji_file(date):
     global DirDataJapaneseOmikuji
     fullpath = DirDataJapaneseOmikuji + "/" + date + ".json"
     return fullpath
-    
+
 def is_exist_today_omikuji_file(date):
     fullpath = ""
     try:
@@ -137,7 +137,7 @@ def is_exist_today_omikuji_file(date):
             return False
     except:
         pass
-    
+
     return False
 
 def get_today_omikuji_data(date):
@@ -148,12 +148,12 @@ def get_today_omikuji_data(date):
         return json_data
     except:
         pass
-        
+
     return False
 
 def save_today_omikuji_data(date, dict):
     fullpath = get_date_omikuji_file(date)
-    
+
     try:
         json_data = json.dumps(dict, indent=4)
         with open(fullpath,'w') as fw:
@@ -169,7 +169,7 @@ def get_busy_omikuji_message(message):
     avator_url = client.user.default_avatar_url or client.user.default_avatar_url
     avator_url = avator_url.replace(".webp?", ".png?")
     # em.set_author(name='朱伊', icon_url=avator_url)
-    
+
     em.add_field(name="只今集計中です!!", value="─────────", inline=False)
     return em
 
@@ -178,7 +178,7 @@ def get_error_omikuji_message(message):
     avator_url = client.user.default_avatar_url or client.user.default_avatar_url
     avator_url = avator_url.replace(".webp?", ".png?")
     # em.set_author(name='朱伊', icon_url=avator_url)
-    
+
     em.add_field(name="エラーです!!", value="─────────", inline=False)
     return em
 
@@ -197,7 +197,7 @@ def is_busy_timestamp(message):
         return True
     if date.hour == 0 and date.minute == 0 and date.second <= 5:
         return True
-    
+
     return False
 
 async def get_embedded_omikuji_object(message):
@@ -206,7 +206,7 @@ async def get_embedded_omikuji_object(message):
     print("メンバー情報がある？" + str(has))
     if not has:
         return None, None
-        
+
     member_exp = 0
     try:
         post_path = 'DataMemberPostInfo/' + str(message.author.id) + ".json"
@@ -215,7 +215,7 @@ async def get_embedded_omikuji_object(message):
             member_exp = postinfo["exp"]
     except:
         pass
-    
+
     print("経験値" + str(member_exp))
 
     #今日の日付の作成
@@ -244,12 +244,12 @@ async def get_embedded_omikuji_object(message):
         result = save_today_omikuji_data(strdate, first_dict)
         if result == False:
             return get_error_omikuji_message(message), None
-    
+
     # ファイルがあるので読み込み
     result = get_today_omikuji_data(strdate)
     if result == False:
         return get_error_omikuji_message(message), None
-    
+
     un_list = {
         "大吉":"01",
         "吉":"02",
@@ -260,10 +260,10 @@ async def get_embedded_omikuji_object(message):
         "凶":"47",
         "大凶":"48",
     }
-    
+
     # ハッシュからランダムで１つ選ぶ
     rndstr = random.choice(["吉", "吉", "吉", "吉", "中吉", "中吉", "中吉", "中吉", "小吉", "小吉", "小吉", "小吉", "末吉", "末吉", "末吉", "末吉", "大吉", "凶", "大凶"])
-    
+
     # 問題があるメンバーであれば大吉は渡さない
     is_issue_member = is_this_member_issue_member(message.author)
     if is_issue_member or member_exp < 200:
@@ -281,14 +281,14 @@ async def get_embedded_omikuji_object(message):
         print(k)
         if id in result[k]:
              today_omikuji = k
-    
-    is_use_ticket = False         
+
+    is_use_ticket = False
     # 該当のメンバーは今日おみくじを引いている
     if today_omikuji != "":
         print("今日すでに引いたのと同じものへと修正")
         omikuji_key = today_omikuji
         omikuji_lv = un_list[omikuji_key]
-    
+
     # 該当のメンバーは今日はじめておみくじを引いた
     else:
         max_omikuji_payment_target = 10
@@ -325,13 +325,13 @@ async def get_embedded_omikuji_object(message):
     if today_omikuji == "" and omikuji_key == "ぴょん吉":
         pyon_success = await RegistEtherMemberInfo.increment_one_member_omikuji_data(message, message.author.id)
         is_use_ticket = False
-    # 
+    #
     em = discord.Embed(title="本日のおみくじ", description= "<@" + str(message.author.id) + ">", color=0xDEED33)
 
     avator_url = client.user.default_avatar_url or client.user.default_avatar_url
     avator_url = avator_url.replace(".webp?", ".png?")
     # em.set_author(name='朱伊', icon_url=avator_url)
-    
+
     # em.add_field(name=omikuji_key + "です!!", value="** **", inline=False)
     if is_use_ticket:
         em.add_field(name="幸運のおみくじ券", value="１枚使用", inline=False)
@@ -358,7 +358,7 @@ async def get_omikuji_from_kaiwa(message, override_message = ""):
     stripped_msg = message.content.strip()
     if override_message:
         stripped_msg = override_message
-    
+
     #utf8_byte 数
     kaiwa_utf8_byte_count = EastAsianWidthCounter.get_east_asian_width_count_effort(stripped_msg)
     print("文字列のバイト数" + str(kaiwa_utf8_byte_count))
@@ -379,11 +379,11 @@ async def get_omikuji_from_kaiwa(message, override_message = ""):
                     await client.send_message(message.channel, "このおみくじ券、<@" + message.author.id + "> さんのでございますか？")
                 if rnd % 3 == 2:
                     await client.send_message(message.channel, "<@" + message.author.id + "> さん、おみくじ券いかがでございますか～")
-                    
+
                 em = discord.Embed(title=" ", description=" ", color=0xDEED33)
                 em.add_field(name="幸運のおみくじ券", value="１枚追加", inline=False)
                 await client.send_message(message.channel, embed=em)
-            
+
                 print("おみくじ1枚ゲット!!")
         except:
             print(sys.exc_info())
@@ -418,7 +418,7 @@ def report_command_one_key_eth(json_data, key, message):
         member_id_list.append(mem.id)
 
     msg = []
-    
+
     try:
         for id in json_data[key]:
             if id in member_id_list:
@@ -428,10 +428,10 @@ def report_command_one_key_eth(json_data, key, message):
                         with open(fullpath,'r') as fr:
                             json_data = json.load(fr)
                         msg.append(json_data["eth_address"])
-                        
+
                     except:
                         pass
-                        
+
                 else:
                     msg.append( "<@" + str(id) + ">" )
     except:
@@ -441,7 +441,7 @@ def report_command_one_key_eth(json_data, key, message):
 
 async def report_command(message):
     if is_report_command_condition(message.content):
-        m = re.search("^!omikujiinfo (\d{8})$", message.content)
+        m = re.search(r"^!omikujiinfo (\d{8})$", message.content)
         date = m.group(1)
         fullpath = get_date_omikuji_file(date)
         if os.path.exists(fullpath):
@@ -452,5 +452,5 @@ async def report_command(message):
             await client.send_message(message.channel, ret)
         else:
             await client.send_message(message.channel, "指定の年月日のおみくじ情報はありません。")
-        
+
 

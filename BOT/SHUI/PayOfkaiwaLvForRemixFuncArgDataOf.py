@@ -55,7 +55,7 @@ def CalclateERCPaid(YEAR_MONTH):
     print("len(amo):" + str(len(print_amount)))
 
     collected_count = 17
-        
+
     report = ""
     pre_ix = 0
     while(True):

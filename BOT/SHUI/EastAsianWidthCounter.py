@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2018 Akitsugu Komiyama
 # under the GPL v3 License.
-# 
+#
 
 import unicodedata
 
@@ -15,8 +15,8 @@ def get_east_asian_width_count_touhaba(text):
         else:
             count += 1
     return count
-    
-    
+
+
 
 # 該当テキストを入力労力に比較的沿う形のカウンター
 def get_east_asian_width_count_effort(text):
@@ -26,13 +26,13 @@ def get_east_asian_width_count_effort(text):
         return ch_len
     except:
         pass
-        
+
     try:
         ch_len = len(text)
         return ch_len
     except:
         pass
-    
+
     return 0
 
 

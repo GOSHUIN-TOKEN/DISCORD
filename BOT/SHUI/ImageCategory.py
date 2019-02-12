@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2018 Akitsugu Komiyama
 # under the GPL v3 License.
-# 
+#
 
 
 import builtins
@@ -23,7 +23,7 @@ import traceback
 import JapaneseOmikuji
 
 
-        
+
 
 def get_docomo_naturalchat_key():
     KEY = os.getenv("DISCORD_DOCOMO_IMAGERECOGNITION_KEY", r'')
@@ -71,14 +71,14 @@ def getImageCategory(fname, modelName="scene"):
         files = files
     )
     data = result.json()
-    print(data)    
+    print(data)
     if "candidates" in data:
         json = data["candidates"]
         tag0 = json[0]["tag"]
         print(tag0)
         score0 = json[0]["score"]
         print(score0)
-        
+
         if len(json) == 1:
             return tag0, score0, None, None, None, None
 
@@ -103,8 +103,8 @@ def getImageCategory(fname, modelName="scene"):
             score2 = json[2]["score"]
             print(score0)
             return tag0, score0, tag1, score1, tag2, score2
-        
-        
+
+
     return None, None, None, None, None, None
 
 
@@ -122,20 +122,20 @@ def getImageScene(fname, modelName, message):
         'modelName': (None, modelName, 'text/plain; charset=utf-8'),
         'image': (os.path.basename(fname), data, get_image_type(fname))
     }
-    
+
     result = requests.post(
         url = url,
         params = params,
         files = files
     )
     data = result.json()
-    # print(data)    
+    # print(data)
     if "candidates" in data:
         json = data["candidates"]
 
         print(json)
 
-        
+
         tag0 = json[0]["tag"]
         print(tag0)
         score0 = json[0]["score"]
@@ -147,18 +147,18 @@ def getImageScene(fname, modelName, message):
                 print("★食事料理に矯正")
                 if score0 < 0.5:
                     score0 = 0.99
-                
+
         # 返す値
         retData = {"MainTagName":tag0, "MainScore":score0}
-        
-        
+
+
         subTagName = None
         subScore = None
         subTagName1 = None
         subScore1 = None
         subTagName2 = None
         subScore2 = None
-        
+
         if tag0 == "建物":
             subTagName, subScore, subTagName1, subScore1, subTagName2, subScore2  = getImageCategory(fname, modelName="landmark")
         if tag0 == "花":
@@ -208,7 +208,7 @@ def is_analyze_condition(message):
                     return att["url"]
     except:
         print(sys.exc_info())
-    
+
     return None
 
 
@@ -225,7 +225,7 @@ async def download(url, file_name):
             return file_name
     except:
         print(sys.exc_info())
-        
+
     return None
 
 
@@ -234,21 +234,21 @@ async def analyze_image(message, url):
         # ビンゴは反応しない
         if "ビンゴ" in message.channel.name:
             return
-            
+
         # 投稿が多いので間引く
         if "見ちゃイヤ" in message.channel.name:
             if random.randint(1,15) <= 14:
                 return
-            
+
         delete_old_image(message)
-        
+
         # 現在のunixタイムを出す
         now = datetime.datetime.now()
         unix = now.timestamp()
         unix = int(unix)
-        
+
         ext = get_image_ext(url)
-        
+
         dwImageFilePath = await download(url, "DataTempImage/" + str(unix) + ext)
         # 保存に成功していたら
         if dwImageFilePath:
@@ -257,7 +257,7 @@ async def analyze_image(message, url):
 
             if ("今日のご飯" in message.channel.name and resultAnalyzeData["MainTagName"] == "食事・料理"):
                 print("★★今日のご飯特殊処理")
-                
+
                 # メインもサブも0.8以上
                 if "SubScore" in resultAnalyzeData and resultAnalyzeData["SubScore"] != None and resultAnalyzeData["SubScore"] > 0.8:
                     print("合格1")
@@ -277,7 +277,7 @@ async def analyze_image(message, url):
                 elif ("SubScore" in resultAnalyzeData and resultAnalyzeData["SubScore"] != None and resultAnalyzeData["SubScore"] > 0.15) and ("SubScore1" in resultAnalyzeData and resultAnalyzeData["SubScore1"] != None and resultAnalyzeData["SubScore1"] > 0.14) and ("SubScore2" in resultAnalyzeData and resultAnalyzeData["SubScore2"] != None and resultAnalyzeData["SubScore2"] > 0.13):
                     print("合格4")
                     await replay_image_message(message, resultAnalyzeData["SubTagName"] + "と、" + resultAnalyzeData["SubTagName1"] + "、それと " + resultAnalyzeData["SubTagName2"] , False)
-                    
+
 
             # まずはメイン0.95以上が目安
             elif "MainScore" in resultAnalyzeData and resultAnalyzeData["MainScore"] != None and resultAnalyzeData["MainScore"] > 0.95:
@@ -285,16 +285,16 @@ async def analyze_image(message, url):
                 # メインもサブも0.95以上
                 if "SubScore" in resultAnalyzeData and resultAnalyzeData["SubScore"] != None and resultAnalyzeData["SubScore"] > 0.95:
                     await replay_image_message(message, resultAnalyzeData["SubTagName"])
-                    
+
                 # サブだが0.8はある
                 elif "SubScore" in resultAnalyzeData and resultAnalyzeData["SubScore"] != None and resultAnalyzeData["SubScore"] > 0.80:
-                
+
                     await replay_image_message(message, resultAnalyzeData["SubTagName"], False)
-                
+
                 # メインが0.95以上ということでのみの評価
                 else:
                     await replay_image_message(message, resultAnalyzeData["MainTagName"])
-                    
+
             # まずはメイン0.8以上が最低ライン
             elif "MainScore" in resultAnalyzeData and resultAnalyzeData["MainScore"] != None and resultAnalyzeData["MainScore"] > 0.80:
 
@@ -303,7 +303,7 @@ async def analyze_image(message, url):
                     await replay_image_message(message, resultAnalyzeData["SubTagName"])
 
                 elif "SubScore" in resultAnalyzeData and resultAnalyzeData["SubScore"] != None and resultAnalyzeData["SubScore"] > 0.80:
-                
+
                     await replay_image_message(message, resultAnalyzeData["SubTagName"], False)
 
                 # メインが0.8以上ということでのみの評価
@@ -317,12 +317,12 @@ async def analyze_image(message, url):
                 if "SubScore" in resultAnalyzeData and resultAnalyzeData["SubScore"] != None and resultAnalyzeData["SubScore"] > 0.98:
                     await replay_image_message(message, resultAnalyzeData["SubTagName"])
 
-            
+
     except:
         print(sys.exc_info())
-        
-        
-        
+
+
+
 async def replay_image_message(message, word, isStrong = True):
     print("画像への返事")
     if isStrong:
@@ -340,7 +340,7 @@ async def replay_image_message(message, word, isStrong = True):
         await client.send_typing_message(message.channel, imgmsg)
         await JapaneseOmikuji.get_omikuji_from_kaiwa(message, word)
 
-        
+
 # 現在のunixタイムを出す
 pre_datetime_unix_time = 0
 
@@ -368,7 +368,7 @@ def delete_old_image(message):
                     date = m.group(0)
                     print(date)
                     date = int(date)
-                    
+
                     # 現在のunixタイムを出す
                     now = datetime.datetime.now()
                     unix = now.timestamp()
@@ -377,10 +377,10 @@ def delete_old_image(message):
                     if unix-date > 600:
                         os.remove('DataTempImage/' + file)
                     # print (unix - date)
-                    
+
                 except:
                     print(sys.exc_info())
-                
+
 
     else:
         print(unix-pre_datetime_unix_time)

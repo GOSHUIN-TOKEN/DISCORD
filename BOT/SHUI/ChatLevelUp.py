@@ -66,7 +66,7 @@ def get_lv_from_exp(exp):
         # 指定された経験値より、レベル表の総合経験値が低いなら
         if t[1] < exp:
             lv = t[0] # すくなくともそのレベルには到達している
-    
+
     return lv
 
 # ２つのテキストの類似度の比較
@@ -88,7 +88,7 @@ async def report_error(message, error_msg):
     avator_url = client.user.default_avatar_url or client.user.default_avatar_url
     avator_url = avator_url.replace(".webp?", ".png?")
     em.set_author(name='朱伊', icon_url=avator_url)
-    
+
     em.add_field(name="返信相手", value= "<@" + message.author.id + ">", inline=False)
     em.add_field(name="エラー", value=error_msg, inline=False)
     try:
@@ -113,7 +113,7 @@ def has_post_data(message):
         return True
 
 
-    
+
 
 
 async def is_syougou_up(message):
@@ -127,7 +127,7 @@ async def show_level_infomation(message, exp, default="会話レベル情報"):
         path = RegistEtherMemberInfo.get_data_memberpaid_path(message, message.author.id)
         print(path)
         with open(path, "r") as fr2:
-            paidinfo = json.load(fr2)    
+            paidinfo = json.load(fr2)
     except:
         pass
 
@@ -151,7 +151,7 @@ async def show_level_infomation(message, exp, default="会話レベル情報"):
                         em.add_field(name="報酬を支払済みの GOSHUIN枚数", value="0 枚", inline=True)
                 else:
                     em.add_field(name="報酬を支払済みの GOSHUIN枚数", value="0 枚", inline=True)
-                
+
         except Exception as e3:
             t, v, tb = sys.exc_info()
             print(traceback.format_exception(t,v,tb))
@@ -170,7 +170,7 @@ async def show_level_infomation(message, exp, default="会話レベル情報"):
             int_cur_per_nex = 200
         em.add_field(name="経験値", value=str_cur_per_nex, inline=True)
         em.set_thumbnail(url=avator_url)
-        
+
         em.set_image(url="http://discord.goshuin.in/BOT/ChatLevelUp/image/level_up_image_{0:03d}.png".format(int_cur_per_nex))
     #        em.add_field(name="テスト", value=avator_url, inline=True)
 
@@ -180,13 +180,13 @@ async def show_level_infomation(message, exp, default="会話レベル情報"):
         print(traceback.format_exception(t,v,tb))
         print(traceback.format_tb(e.__traceback__))
         print("show_level_infomation 中エラー")
-        
+
 async def command_show_level_infomation(message, author):
 
     try:
         if not has_post_data(message):
             await make_one_kaiwa_post_data(message)
-            
+
         path = get_data_kaiwa_post_path(message)
         print(path)
         with open(path, "r") as fr:
@@ -205,7 +205,7 @@ def is_level_command_condition(message):
         return True
     if re.match("^!rank$", message):
         return True
-        
+
     return False
 
 
@@ -231,7 +231,7 @@ async def add_level_role(roles, author, level):
 
 async def all_member_add_level_role(message):
     for m in list(message.channel.server.members):
-    
+
         id = m.id
         path = 'DataMemberPostInfo/' + str(id) + ".json"
         try:
@@ -293,11 +293,11 @@ def remove_emoji(src_str):
 update_kaiwa_post_hasu = {}
 
 async def update_one_kaiwa_post_data(message):
-    
+
     try:
         # print("キャッシュ")
         # print(update_kaiwa_post_hasu)
-    
+
         if not has_post_data(message):
             await make_one_kaiwa_post_data(message)
 
@@ -305,7 +305,7 @@ async def update_one_kaiwa_post_data(message):
         if not message.channel.id in update_kaiwa_post_hasu:
             # 用意
             update_kaiwa_post_hasu[message.channel.id] = []
-        
+
         path = get_data_kaiwa_post_path(message)
         print(path)
         with open(path, "r") as fr:
@@ -365,7 +365,7 @@ async def update_one_kaiwa_post_data(message):
         now = datetime.datetime.now()
         unix = now.timestamp()
         unix = int(unix)
-        
+
         # すでに過去の記録があるならば…(初版ではこのデータ型はないのでチェックが必要)
         if "post_last_gettime" in postinfo:
             # 過去のunixタイムを過去のnow形式にする。
@@ -385,7 +385,7 @@ async def update_one_kaiwa_post_data(message):
                     add_experience = int(total_seconds/2)
 
             postinfo["post_last_gettime"] = unix
-            
+
         # はじめての保存なら、問題はないさっくり保存
         else:
             postinfo["post_last_gettime"] = unix
@@ -404,10 +404,10 @@ async def update_one_kaiwa_post_data(message):
         if prev_level != post_level:
             await show_level_infomation(message, postinfo["exp"], "会話レベルがアップしました!!")
             await add_level_role(message.channel.server.roles, message.author, post_level)
-  
-          
+
+
         print(str(add_experience) + "が経験値として加算された")
-        
+
         # テキストも履歴として加える
         postinfo["posthistory"].append(text)
 
@@ -418,7 +418,7 @@ async def update_one_kaiwa_post_data(message):
             if len(postinfo["posthistory"]) > 20:
                 # 先頭をカット
                 postinfo["posthistory"].pop(0)
-                
+
             # すでに該当チャンネルの投稿履歴が500以上あれば
             if len(update_kaiwa_post_hasu[message.channel.id]) > 500:
                 # 先頭をカット
@@ -435,7 +435,7 @@ async def update_one_kaiwa_post_data(message):
         if kaiwa_utf8_byte_count > 6:
             # メッセージのチャンネルに対応したキャッシュにたしこむ
             update_kaiwa_post_hasu[message.channel.id].append(text)
-            
+
         return postinfo
 
     except Exception as e:
@@ -444,7 +444,7 @@ async def update_one_kaiwa_post_data(message):
         print(traceback.format_tb(e.__traceback__))
         await report_error(message, "update_one_kaiwa_post_dataデータ作成中にエラー")
         await report_error(message, sys.exc_info())
-    
+
     return None
 
 
@@ -456,7 +456,7 @@ async def make_one_kaiwa_post_data(message):
             "posthistory": [],
             "exp": 0,
         }
-        
+
         path = get_data_kaiwa_post_path(message)
         print("ここきた★" + path)
         json_data = json.dumps(postinfo, indent=4)
@@ -478,7 +478,7 @@ async def push_kaiwa_post(message, text):
     postinfo = await update_one_kaiwa_post_data(message)
     if postinfo != None:
         pass
-        
+
     # count = EastAsianWidthCounter.get_east_asian_width_count_effort(text)
     # print(count)
 

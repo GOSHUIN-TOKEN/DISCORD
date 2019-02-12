@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2018 Akitsugu Komiyama
 # under the GPL v3 License.
-# 
+#
 
 import builtins
 
@@ -24,14 +24,14 @@ def get_welcome_count_channel(member):
     for ch in member.server.channels:
         if "🌳裏門🌳" == str(ch):
             return ch
-            
+
     return None
 
 def get_welcome_channel(member):
     for ch in member.server.channels:
         if "🌳裏門🌳" == str(ch):
             return ch
-            
+
     return None
 
 
@@ -73,7 +73,7 @@ async def on_member_join(member):
                 inviteinfo[invite.id] = {"uses":invite.uses, "owner":invite.inviter.id, "children":[]}
 
             # 前回の使用者数と食い違っている
-            
+
             invitehash = inviteinfo[invite.id]
             # print("invite.uses" + str(invite.uses))
             # print("invitehash['uses']" + str(invitehash["uses"]))
@@ -86,14 +86,14 @@ async def on_member_join(member):
                 # print("これが使われた" + _inviter.id + ":" + _inviter.name)
                 if not "children" in invitehash:
                     invitehash["children"] = []
-                
+
                 # メンバーIDがまだそこに追加されてなければ
                 if not member.id in invitehash["children"]:
                     # このメンバーが、招待された人としてIDを追加する
                     invitehash["children"].append(member.id)
                     this_member_inviter = _inviter
                     break
-                    
+
 
             invitehash["uses"] = invite.uses
 
@@ -115,7 +115,7 @@ async def on_member_join(member):
             msg_content = msg_content + "└この人を招待した人:" + this_member_inviter.name + "\n"
 
         await client.send_message(ch2, msg_content)
-        
+
         # キャッシュにuserオブジェクトの方を追加。userオブジェクトは
         # サーチが重いのでこまめにキャッシュしておく
         _mem_user = await client.get_user_info(member.id)
@@ -141,24 +141,24 @@ def get_member_id_hash(member):
         member_id_hash[mem.id] = mem
 
     return member_id_hash
-    
+
 async def on_member_remove(member):
 
     try:
         member_id_list = get_member_id_list(member)
-    
+
         path = get_data_inviteinfo_path()
         with open(path, "r") as fr:
             inviteinfo = json.load(fr)
 
         this_member_inviter = 0
-            
+
         # その中をなめまわして、該当のメンバーがいるなら削除
         for key in inviteinfo:
             invitehash = inviteinfo[key]
             if not "children" in invitehash:
                 invitehash["children"] = []
-        
+
             # メンバーIDが配列にあるならば
             if member.id in invitehash["children"]:
                 # このメンバーが、退場した人としてIDを削除する
@@ -172,7 +172,7 @@ async def on_member_remove(member):
                     print(traceback.format_exception(t,v,tb))
                     print(traceback.format_tb(e.__traceback__))
                     pass
-            
+
             # リストの中で削除するので、複製を作ってfor
             for child in invitehash["children"][:]:
                 if not child in member_id_list:
@@ -199,7 +199,7 @@ async def on_member_remove(member):
             else:
                 # カウント数を最新に
                 inviteinfo[invite.id]["uses"] = invite.uses
-            
+
         path = get_data_inviteinfo_path()
         json_data = json.dumps(inviteinfo, indent=4)
         with open(path, "w") as fw:
@@ -222,7 +222,7 @@ async def on_member_remove(member):
 
     except:
         pass
-            
+
 
 
 def is_invites_show_command_condition(command):
@@ -262,16 +262,16 @@ async def another_invites_show_command(message):
 async def invites_show_command(message, target_author):
     print("invites_show_command")
     owner_id = target_author.id
-    
+
     is_issue_inviter = False
     for r in target_author.roles:
         if r.name == "issue_inviter":
             is_issue_inviter = True
-    
+
     try:
         invite_point = 0
         invite_num   = 0
-        
+
         path = get_data_inviteinfo_path()
         with open(path, "r") as fr:
             inviteinfo = json.load(fr)
@@ -282,7 +282,7 @@ async def invites_show_command(message, target_author):
         # それぞれの招待について
         for key in inviteinfo:
             invitehash = inviteinfo[key]
-        
+
             # 招待の発行主が一致した
             if "owner" in invitehash and owner_id == invitehash["owner"]:
 
@@ -295,16 +295,16 @@ async def invites_show_command(message, target_author):
                         # サーバーに居る人なら
                         if child_id in member_id_hash:
                             member_obj = member_id_hash[child_id]
-                            
+
                             _user = None
                             # メンバーオブジェクト⇒ユーザーオブジェクトへ
                             if child_id in USER_ID_LIST:
                                 _user = USER_ID_LIST[child_id]
-                            
+
                             if _user == None:
                                 _user = await client.get_user_info(child_id)
                                 USER_ID_LIST[child_id] = _user
-                            
+
                             # アカウント作成時期
                             create_time = _user.created_at
 
@@ -316,19 +316,19 @@ async def invites_show_command(message, target_author):
 
                             invite_num = invite_num + 1
                             add_point = 1
-                            
-                            
+
+
                             # 20日以上経過していること
                             if tdelta and tdelta.days >= 20:
-                                
+
                                 # print("差分:" + str(tdelta.days))
                                 # print("差分:" + str(total_seconds))
-                                
+
                                 add_point = 1
                             else:
                                 add_point = 0.1
-                            
-                            
+
+
                             memberinfo_path = RegistEtherMemberInfo.get_data_memberinfo_path(message, child_id)
                             if memberinfo_path and os.path.exists(memberinfo_path):
                                 add_point = add_point * 1
@@ -404,7 +404,7 @@ async def invitesraw_show_command(message, target_author):
     try:
         invite_point = 0
         invite_num   = 0
-        
+
         path = get_data_inviteinfo_path()
         with open(path, "r") as fr:
             inviteinfo = json.load(fr)
@@ -415,7 +415,7 @@ async def invitesraw_show_command(message, target_author):
         # それぞれの招待について
         for key in inviteinfo:
             invitehash = inviteinfo[key]
-        
+
             # 招待の発行主が一致した
             if "owner" in invitehash and owner_id == invitehash["owner"]:
 
@@ -428,10 +428,10 @@ async def invitesraw_show_command(message, target_author):
                         # サーバーに居る人なら
                         if child_id in member_id_hash:
                             member_obj = member_id_hash[child_id]
-                            
+
                             # メンバーオブジェクト⇒ユーザーオブジェクトへ
                             # _user = await client.get_user_info(child_id)
-                            
+
                             # アカウント作成時期
                             create_time = member_obj.joined_at
 
@@ -445,15 +445,15 @@ async def invitesraw_show_command(message, target_author):
                             add_point = 1
                             # 20日以上経過していること
                             if tdelta and tdelta.days >= 20:
-                                
+
                                 # print("差分:" + str(tdelta.days))
                                 # print("差分:" + str(total_seconds))
-                                
+
                                 add_point = 1
                             else:
                                 add_point = 0.1
-                            
-                            
+
+
                             memberinfo_path = RegistEtherMemberInfo.get_data_memberinfo_path(message, child_id)
                             if memberinfo_path and os.path.exists(memberinfo_path):
                                 add_point = add_point * 1

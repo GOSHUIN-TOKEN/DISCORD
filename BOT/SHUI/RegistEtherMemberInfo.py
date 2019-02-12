@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2018 Akitsugu Komiyama
 # under the GPL v3 License.
-# 
+#
 
 import builtins
 
@@ -25,7 +25,7 @@ async def report_error(message, error_msg):
     avator_url = client.user.default_avatar_url or client.user.default_avatar_url
     avator_url = avator_url.replace(".webp?", ".png?")
     em.set_author(name='朱伊', icon_url=avator_url)
-    
+
     em.add_field(name="返信相手", value= "<@" + message.author.id + ">", inline=False)
     em.add_field(name="エラー", value=error_msg, inline=False)
     print("ここまできた1")
@@ -79,7 +79,7 @@ async def decrement_one_member_omikuji_data(message, id):
     except:
         await report_error(message, "decrement_one_member_omikuji_data中にエラー")
         await report_error(message, sys.exc_info())
-    
+
     return None
 
 # 1枚増やすが、５枚以上は増えない。又1枚増えると、６時間は増えない
@@ -101,12 +101,12 @@ async def increment_one_member_omikuji_data(message, id):
             return None
 
         memberinfo["omikuji_ticket_count"] = memberinfo["omikuji_ticket_count"] + 1
-        
+
         # 現在のunixタイムを出す
         now = datetime.datetime.now()
         unix = now.timestamp()
         unix = int(unix)
-        
+
         # すでに過去の記録があるならば…(初版ではこのデータ型はないのでチェックが必要)
         if "omikuji_ticket_last_gettime" in memberinfo:
             # 過去のunixタイムを過去のnow形式にする。
@@ -120,7 +120,7 @@ async def increment_one_member_omikuji_data(message, id):
                 return None
 
             memberinfo["omikuji_ticket_last_gettime"] = unix
-            
+
         # はじめての保存なら、問題はないさっくり保存
         else:
             memberinfo["omikuji_ticket_last_gettime"] = unix
@@ -136,7 +136,7 @@ async def increment_one_member_omikuji_data(message, id):
     except:
         await report_error(message, "increment_one_member_omikuji_data中にエラー")
         await report_error(message, sys.exc_info())
-    
+
     return None
 
 async def get_count_one_member_omikuji_data(message, id):
@@ -155,7 +155,7 @@ async def get_count_one_member_omikuji_data(message, id):
     except:
         await report_error(message, "get_count_one_member_omikuji_data中にエラー")
         await report_error(message, sys.exc_info())
-    
+
     return None
 
 
@@ -178,7 +178,7 @@ async def update_one_member_data(message, address, id):
     except:
         await report_error(message, "MemberDataデータ作成中にエラー")
         await report_error(message, sys.exc_info())
-    
+
     return False
 
 # 1人分のメンバーデータの作成
@@ -189,7 +189,7 @@ async def make_one_member_data(message, address, id):
             "waves_address": "",
             "user_id": 0
         }
-        
+
         memberinfo["user_id"] = id
         memberinfo["eth_address"] = address
 
@@ -213,10 +213,10 @@ async def make_one_ticketinfo_data(message, address, id):
             "omikuji_ticket_count": 0,
             "user_id": 0
         }
-        
+
         ticketinfo["user_id"] = id
         ticketinfo["omikuji_ticket_count"] = 1
-        
+
         path = get_data_ticketinfo_path(message, id)
         print(path)
         json_data = json.dumps(ticketinfo, indent=4)
@@ -246,9 +246,9 @@ async def make_one_member_paid(message, id):
             "invite_paid_amount": 0,
             "user_id": 0
         }
-        
+
         paidinfo["user_id"] = id
-        
+
         path = get_data_memberpaid_path(message, id)
         print(path)
         json_data = json.dumps(paidinfo, indent=4)
@@ -258,7 +258,7 @@ async def make_one_member_paid(message, id):
     except:
         await report_error(message, "make_one_member_paid 中にエラーが発生しました。")
         await report_error(message, sys.exc_info())
-    
+
     return False
 
 
@@ -311,14 +311,14 @@ def get_ether_regist_channel(message):
     for ch in message.channel.server.channels:
         if "お財布登録" in str(ch) or "eth-address" in str(ch):
             return ch
-            
+
     return None
 
 
 async def show_another_member_data(message):
     print("another_member_data_show_command")
     try:
-        m = re.search("^!memberinfo <@(\d+?)>$", message.content)
+        m = re.search(r"^!memberinfo <@(\d+?)>$", message.content)
         if m:
             print("マッチ")
             targetg_member_id = m.group(1)
@@ -340,7 +340,7 @@ async def show_another_member_data(message):
 async def show_another_ticket_data(message):
     print("another_ticket_data_show_command")
     try:
-        m = re.search("^!ticketinfo <@(\d+?)>$", message.content)
+        m = re.search(r"^!ticketinfo <@(\d+?)>$", message.content)
         if m:
             print("マッチ")
             targetg_member_id = m.group(1)
@@ -367,7 +367,7 @@ async def show_one_member_data(message, id):
         print("メンバー情報がある？" + str(has))
         if not has:
             return
-            
+
         print(path)
         with open(path, "r") as fr:
             memberinfo = json.load(fr)
@@ -401,7 +401,7 @@ async def show_one_member_data(message, id):
     except:
         await report_error(message, "show_one_member_data中にエラー")
         await report_error(message, sys.exc_info())
-    
+
     return False
 
 
@@ -412,7 +412,7 @@ async def show_one_ticket_data(message, id):
         print("メンバー情報がある？" + str(has))
         if not has:
             return
-            
+
         print(path)
         with open(path, "r") as fr:
             ticketinfo = json.load(fr)
@@ -441,7 +441,7 @@ async def show_one_ticket_data(message, id):
     except:
         await report_error(message, "show_one_member_data中にエラー")
         await report_error(message, sys.exc_info())
-    
+
     return False
 
 
@@ -456,7 +456,7 @@ def is_show_one_member_data_condition(message):
 
 def is_show_another_member_data_condition(message):
     msg = str(message.content).strip()
-    if re.match("^!memberinfo <@\d+?>$", msg):
+    if re.match(r"^!memberinfo <@\d+?>$", msg):
         return True
 
 
@@ -470,7 +470,7 @@ def is_show_one_ticket_data_condition(message):
 
 def is_show_another_ticket_data_condition(message):
     msg = str(message.content).strip()
-    if re.match("^!ticketinfo <@\d+?>$", msg):
+    if re.match(r"^!ticketinfo <@\d+?>$", msg):
         return True
 
 
@@ -484,4 +484,4 @@ async def has_member_data(message, id, withMessage):
         return False
     else:
         return True
-        
+

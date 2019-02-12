@@ -41,7 +41,7 @@ class NaturalChatMessage:
 
     async def get_naturalchat_mesasge(self, message, override_word = "", need_lock = True):
         KEY = self.KEY
-        
+
         mutex = None
         try:
 
@@ -67,7 +67,7 @@ class NaturalChatMessage:
                 if result == 0x00000102:
                     print("ロック待ちエラー")
                     return "う～ん..."
-            
+
             payload = {'language':'ja-JP', 'botId':'Chatting','appId':appid,'voiceText':text, 
                 "clientData":{
                       "option":{
@@ -85,20 +85,20 @@ class NaturalChatMessage:
 
             #送信
             r = requests.post(url, data=json.dumps(payload), headers=headers)
-            
+
             data = r.json()
             # print(data)
             response = data['systemText']['utterance'] #変更
             command = data['command']
             self.lastMode = base64.b64decode( command ).decode('utf-8')
-            
+
             if 'srtr' in self.lastMode:
                 self.lastMode = 'srtr'
                 response = random.choice([ "わたくし仕事中でございますから", "時間ができたら、お相手いたしますわ" ])
                 self.lastMode = 'dialog'
             else:
                 self.lastMode = 'dialog'
-            
+
             msg = ""
             if response =="読みが不明か名詞ではありませんので、別の言葉でお願いします。" and (not "しりとり" in text):
                 # 必ず矯正してから
@@ -111,7 +111,7 @@ class NaturalChatMessage:
 
                 msg = response
 
-                
+
             else:
                 response = self.modify_response(response)
                 # メッセージのチャンネルに対応したキャッシュにたしこむ
@@ -120,13 +120,13 @@ class NaturalChatMessage:
 
                 msg = '{0.author.mention} '.format(message) + response
 
-            
+
             if mutex != None:
                 Kernel32.ReleaseMutex(mutex)
                 Kernel32.CloseHandle(mutex)
 
             return msg
-            
+
         except RuntimeError:
             if mutex != None:
                 Kernel32.ReleaseMutex(mutex)
@@ -144,9 +144,9 @@ class NaturalChatMessage:
             l = len(str.encode('utf8'))
             if (l) < 4: # 拡張領域文字だとDoCoMoの方が扱えない
                 norm_nickname += str
-        
+
         return norm_nickname
-        
+
     # レスポンス結果の修正
     def modify_response(self, response):
         #シリトリモードだと一人称が変になるので強引に修正
@@ -160,19 +160,19 @@ class NaturalChatMessage:
 
         # 年齢は共通で上書き
         # response = response.replace("年齢は、26歳", "年齢は、23歳")
-        
+
         return response
 
     def get_lastmode(self):
         return self.lastMode
-        
+
     def decrement_appear_zatsudan_cnt(self, msg):
 
         """
         # 朱伊は自分の名前を呼ばれるとしばらくは雑談に登場を継続する
         if "朱伊" in msg:
             self.appear_zatsudan_count = 5
-            
+
         # すでに居ない時は、ごくまれに登場する
         if self.appear_zatsudan_count < -1:
             if random.randint(1,30) < 2:
@@ -182,7 +182,7 @@ class NaturalChatMessage:
         if self.get_lastmode() == "srtr":
             self.appear_zatsudan_count = 3
         """
-        
+
         # １回引く
         self.appear_zatsudan_count = self.appear_zatsudan_count - 1
 

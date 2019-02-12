@@ -60,7 +60,7 @@ def get_lv_from_exp(exp):
         # 指定された経験値より、レベル表の総合経験値が低いなら
         if t[1] < exp:
             lv = t[0] # すくなくともそのレベルには到達している
-    
+
     return lv
 
 def get_coin_amount_from_lv(lv):
@@ -69,7 +69,7 @@ def get_coin_amount_from_lv(lv):
         # 指定されたレベル以下は全部
         if t[0] <= lv:
             amount = amount + t[1] 
-    
+
     return amount
 
 
