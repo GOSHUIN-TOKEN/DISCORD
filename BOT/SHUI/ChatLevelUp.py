@@ -46,7 +46,7 @@ LV_GET_COIN_TABLE = [
 
 # そのレベルになるのに必要な総経験値(Mee6と同じ計算式)
 def need_experiment_value(level):
-    xp_to_desired_level = 5 / 6 * level * (2 * level * level + 27 * level + 91);
+    xp_to_desired_level = 5 / 6 * level * (2 * level * level + 27 * level + 91)
     return xp_to_desired_level
 
 
@@ -216,7 +216,7 @@ async def add_level_role(roles, author, level):
         try:
             #print(r.name)
             # 役職の名前そのものに必須到達レベルがある。
-            m = re.search(".+\s*LV(\d+)", r.name, re.IGNORECASE)
+            m = re.search(r".+\s*LV(\d+)", r.name, re.IGNORECASE)
             if m:
                 #print("マッチ" + r.name)
                 roles_lv = m.group(1)

@@ -53,7 +53,7 @@ def translation_method_get(text: str, src_lang: str, dst_lang: str) -> str:
 
 
 if __name__ == "__main__":
-    result = TranslationMethodPost("りんご", "ja", "en")
+    result = translation_method_post("りんご", "ja", "en")
     print(result)
-    #result = TranslationMethodGet("りんご", "ja", "en")
+    #result = translation_method_get("りんご", "ja", "en")
     #print(result)

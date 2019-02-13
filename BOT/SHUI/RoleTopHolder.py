@@ -98,7 +98,7 @@ def get_member_top_holder_info():
         except:
             print("error")
             pass
-    
+
     return top_holder_info
     # print(ret_list)
 
@@ -106,7 +106,7 @@ ROLE_NAME_TOP_HOLDER_1000 = "ホールド1000万枚～"
 
 async def add_top_holder_role(roles, author, holder_info):
     global ROLE_NAME_TOP_HOLDER_1000
-    
+
     # そのサーバーが持ってる役職
     roles_list = roles
     for r in roles_list:
