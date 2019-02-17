@@ -19,15 +19,18 @@ import traceback
 import copy
 import RegistEtherMemberInfo
 
+if False:
+    client: discord.Client = discord.Client()
 
-def get_welcome_count_channel(member):
+
+def get_welcome_count_channel(member: discord.Member) -> discord.Channel:
     for ch in member.server.channels:
         if "🌳裏門🌳" == str(ch):
             return ch
 
     return None
 
-def get_welcome_channel(member):
+def get_welcome_channel(member: discord.Member) -> discord.Channel:
     for ch in member.server.channels:
         if "🌳裏門🌳" == str(ch):
             return ch
@@ -35,7 +38,7 @@ def get_welcome_channel(member):
     return None
 
 
-def get_data_inviteinfo_path():
+def get_data_inviteinfo_path() -> str:
     return "DataInviteInfo/InviteInfo.json"
 
 # https://foolean.net/p/1691
@@ -43,18 +46,18 @@ def get_data_inviteinfo_path():
 # User.created_at
 # Returns the user’s creation time in UTC.
 # This is when the user’s discord account was created.
-USER_ID_LIST = {}
+USER_ID_LIST: dict = {}
 
 
-async def on_member_join(member):
+async def on_member_join(member: discord.Member):
     print("on_member_join")
 
     try:
         path = get_data_inviteinfo_path()
         with open(path, "r") as fr:
-            inviteinfo = json.load(fr)
+            inviteinfo: dict = json.load(fr)
 
-        this_member_inviter = 0
+        this_member_inviter: int = 0
 
         # サーバーにある招待オブジェクトリスト
         invites = await client.invites_from(member.server)
@@ -97,20 +100,20 @@ async def on_member_join(member):
 
             invitehash["uses"] = invite.uses
 
-        path = get_data_inviteinfo_path()
-        json_data = json.dumps(inviteinfo, indent=4)
+        path: str = get_data_inviteinfo_path()
+        json_data: str = json.dumps(inviteinfo, indent=4)
         with open(path, "w") as fw:
             fw.write(json_data)
 
-        ch = get_welcome_count_channel(member)
-        msg_content = "新規参加者の識別ID:" + member.id +":"+ "<@"+member.id +">\n"
+        ch: discord.Channel = get_welcome_count_channel(member)
+        msg_content: str = "新規参加者の識別ID:" + member.id +":"+ "<@"+member.id +">\n"
         if this_member_inviter != 0:
             msg_content = msg_content + "└この人を招待した人:" + "<@"+this_member_inviter.id +">" + "\n"
 
         await client.send_message(ch, msg_content)
 
-        ch2 = get_welcome_channel(member)
-        msg_content = "新規参加者:" + member.name + "\n"
+        ch2:discord.Channel = get_welcome_channel(member)
+        msg_content: str = "新規参加者:" + member.name + "\n"
         if this_member_inviter != 0:
             msg_content = msg_content + "└この人を招待した人:" + this_member_inviter.name + "\n"
 
@@ -118,7 +121,7 @@ async def on_member_join(member):
 
         # キャッシュにuserオブジェクトの方を追加。userオブジェクトは
         # サーチが重いのでこまめにキャッシュしておく
-        _mem_user = await client.get_user_info(member.id)
+        _mem_user: discord.User = await client.get_user_info(member.id)
         if _mem_user:
             USER_ID_LIST[member.id] = _mem_user
 
@@ -126,7 +129,7 @@ async def on_member_join(member):
         pass
 
 
-def get_member_id_list(member):
+def get_member_id_list(member: discord.Member) -> list:
     # メンバーIDのリスト一覧
     member_id_list = []
     for mem in list(member.server.members):
@@ -134,7 +137,7 @@ def get_member_id_list(member):
 
     return member_id_list
 
-def get_member_id_hash(member):
+def get_member_id_hash(member: discord.Member) -> dict:
     # メンバーIDのリスト一覧
     member_id_hash = {}
     for mem in list(member.server.members):
@@ -142,12 +145,12 @@ def get_member_id_hash(member):
 
     return member_id_hash
 
-async def on_member_remove(member):
+async def on_member_remove(member: discord.Member):
 
     try:
         member_id_list = get_member_id_list(member)
 
-        path = get_data_inviteinfo_path()
+        path: str = get_data_inviteinfo_path()
         with open(path, "r") as fr:
             inviteinfo = json.load(fr)
 
@@ -206,14 +209,14 @@ async def on_member_remove(member):
             # print("保存した")
             fw.write(json_data)
 
-        ch = get_welcome_count_channel(member)
+        ch: discord.Channel = get_welcome_count_channel(member)
         msg_content = "退場者の識別ID:" + member.id +":"+ "<@"+member.id +">\n"
         if this_member_inviter != 0:
             msg_content = msg_content + "└この人を招待した人" + "<@"+this_member_inviter.id +">" + "\n"
 
         await client.send_message(ch, msg_content)
 
-        ch2 = get_welcome_channel(member)
+        ch2: discord.Channel = get_welcome_channel(member)
         msg_content = "退場者:" + member.name + "\n"
         if this_member_inviter != 0:
             msg_content = msg_content + "└この人を招待した人:" + this_member_inviter.name + "\n"
@@ -225,28 +228,24 @@ async def on_member_remove(member):
 
 
 
-def is_invites_show_command_condition(command):
+def is_invites_show_command_condition(command: str) -> bool:
     if re.match("^!invites$", command):
         return True
 
-def is_another_invites_show_command_condition(command):
-    print(command)
+def is_another_invites_show_command_condition(command: str) -> bool:
     if re.match("^!invites <@\d+?>$", command):
         return True
 
 
-async def another_invites_show_command(message):
+async def another_invites_show_command(message: discord.Message):
     print("another_invites_show_command")
     try:
         m = re.search("^!invites <@(\d+?)>$", message.content)
         if m:
-            print("マッチ")
             targetg_member_id = m.group(1)
             if targetg_member_id:
-                print("サーバー")
-                svr = message.author.server
-                target_author = svr.get_member(targetg_member_id)
-                print("おーさー" + str(target_author))
+                svr: discord.Server = message.author.server
+                target_author: discord.Member = svr.get_member(targetg_member_id)
                 if target_author:
                     await invites_show_command(message, target_author)
 
@@ -259,7 +258,7 @@ async def another_invites_show_command(message):
 
 
 
-async def invites_show_command(message, target_author):
+async def invites_show_command(message: discord.Message, target_author: discord.Member):
     print("invites_show_command")
     owner_id = target_author.id
 
@@ -365,13 +364,13 @@ async def invites_show_command(message, target_author):
 
 
 
-def is_another_invitesraw_show_command_condition(command):
+def is_another_invitesraw_show_command_condition(command: str) -> str:
     print(command)
     if re.match("^!invitesraw <@\d+?>$", command):
         return True
 
 
-async def another_invitesraw_show_command(message):
+async def another_invitesraw_show_command(message: discord.Message):
     print("another_invitesraw_show_command")
     try:
         m = re.search("^!invitesraw <@(\d+?)>$", message.content)
@@ -380,8 +379,8 @@ async def another_invitesraw_show_command(message):
             targetg_member_id = m.group(1)
             if targetg_member_id:
                 print("サーバー")
-                svr = message.author.server
-                target_author = svr.get_member(targetg_member_id)
+                svr: discord.Server = message.author.server
+                target_author: discord.Member = svr.get_member(targetg_member_id)
                 print("おーさー" + str(target_author))
                 if target_author:
                     await invitesraw_show_command(message, target_author)
@@ -398,7 +397,7 @@ async def another_invitesraw_show_command(message):
 # Returns the user’s creation time in UTC.
 # This is when the user’s discord account was created.
 
-async def invitesraw_show_command(message, target_author):
+async def invitesraw_show_command(message: discord.Message, target_author: discord.Member):
     print("invites_show_command")
     owner_id = target_author.id
     try:
@@ -439,7 +438,7 @@ async def invitesraw_show_command(message, target_author):
                             now_time = datetime.datetime.now()
 
                             tdelta = now_time - create_time
-                            total_seconds = tdelta.total_seconds()
+                            total_seconds: int = tdelta.total_seconds()
 
                             invite_num = invite_num + 1
                             add_point = 1

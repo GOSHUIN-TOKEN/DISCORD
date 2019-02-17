@@ -25,10 +25,10 @@ import EastAsianWidthCounter
 
 
 
-def get_data_inviteinfo_path():
+def get_data_inviteinfo_path() -> str:
     return "DataInviteInfo/InviteInfo.json"
 
-def get_member_id_list(member):
+def get_member_id_list(member: discord.Member) -> list:
     # メンバーIDのリスト一覧
     member_id_list = []
     for mem in list(member.server.members):
@@ -36,7 +36,7 @@ def get_member_id_list(member):
 
     return member_id_list
 
-def is_this_member_issue_member(member):
+def is_this_member_issue_member(member: discord.Member) -> bool:
     print("who_invite_this_member")
 
     try:
@@ -52,7 +52,7 @@ def is_this_member_issue_member(member):
         with open(path, "r") as fr:
             inviteinfo = json.load(fr)
 
-        id = member.id
+        id: str = member.id
         for oneobj in inviteinfo.values():
             # childrenがあり
             if "children" in oneobj:
@@ -76,7 +76,7 @@ def is_this_member_issue_member(member):
         return False
 
 
-def is_permission_omikuji_condition(message):
+def is_permission_omikuji_condition(message: discord.Member) -> bool:
     ch = str(message.channel)
     if ch in ["🔖おみくじ"]:
        return True
@@ -84,7 +84,7 @@ def is_permission_omikuji_condition(message):
     return False
 
 
-def is_omikuji_command(text):
+def is_omikuji_command(text: str) -> bool:
     if text == 'おみくじ' or text == 'みくじ' :
         return True
 
