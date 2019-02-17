@@ -117,13 +117,24 @@ async def my_background_task_cache_usr_info():
     print("my_background_task_cache_usr_info 完了")
 
 
+"""
+def is_me(m):
+    return m.author == client.user
+
+deleted = await client.purge_from(channel, limit=100, check=is_me)
+await client.send_message(channel, 'Deleted {} message(s)'.format(len(deleted)))
+"""
+
 # チャンネルのメッセージの削除を試みる
 async def DeleteChannelAllMessage(message):
     try:
         tmp = await client.send_message(message.channel, 'チャンネルのメッセージを削除しています')
         async for msg in client.logs_from(message.channel):
             await client.delete_message(msg)
-    except:
+    except Exception as e:
+        t, v, tb = sys.exc_info()
+        print(traceback.format_exception(t,v,tb))
+        print(traceback.format_tb(e.__traceback__))
         print("削除中にエラーが発生しました")
 
 
