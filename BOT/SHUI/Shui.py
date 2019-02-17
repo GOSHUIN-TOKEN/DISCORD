@@ -126,7 +126,7 @@ await client.send_message(channel, 'Deleted {} message(s)'.format(len(deleted)))
 """
 
 # チャンネルのメッセージの削除を試みる
-async def DeleteChannelAllMessage(message):
+async def DeleteChannelAllMessage(message: discord.Message):
     try:
         tmp = await client.send_message(message.channel, 'チャンネルのメッセージを削除しています')
         async for msg in client.logs_from(message.channel):

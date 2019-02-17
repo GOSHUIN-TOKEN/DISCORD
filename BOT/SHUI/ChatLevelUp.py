@@ -21,7 +21,10 @@ import RegistEtherMemberInfo
 
 import EastAsianWidthCounter
 
-LV_GET_COIN_TABLE = [
+if False:
+    client: discord.Client = discord.Client()
+
+LV_GET_COIN_TABLE: list = [
     [5,5000,],
     [10,17000,],
     [15,28000,],
@@ -45,13 +48,13 @@ LV_GET_COIN_TABLE = [
 ]
 
 # そのレベルになるのに必要な総経験値(Mee6と同じ計算式)
-def need_experiment_value(level):
+def need_experiment_value(level) -> int:
     xp_to_desired_level = 5 / 6 * level * (2 * level * level + 27 * level + 91)
     return xp_to_desired_level
 
 
 LV_TO_EXP_LIST = []
-def createChatLevelUpTable():
+def createChatLevelUpTable() -> None:
     if len(LV_TO_EXP_LIST) ==0:
         # lv200まで埋める
         for lv in range(0, 201):
@@ -60,7 +63,7 @@ def createChatLevelUpTable():
     # print(LV_TO_EXP_LIST)
 
 
-def get_lv_from_exp(exp):
+def get_lv_from_exp(exp: int) -> int:
     lv = 0
     for t in LV_TO_EXP_LIST:
         # 指定された経験値より、レベル表の総合経験値が低いなら
@@ -70,11 +73,11 @@ def get_lv_from_exp(exp):
     return lv
 
 # ２つのテキストの類似度の比較
-def get_sequence_matcher_coef(test_1, text_2):
+def get_sequence_matcher_coef(test_1: str, text_2: str) -> float:
 
     # unicodedata.normalize() で全角英数字や半角カタカナなどを正規化する
-    normalized_str1 = unicodedata.normalize('NFKC', test_1)
-    normalized_str2 = unicodedata.normalize('NFKC', text_2)
+    normalized_str1: str = unicodedata.normalize('NFKC', test_1)
+    normalized_str2: str = unicodedata.normalize('NFKC', text_2)
 
     # 類似度を計算、0.0~1.0 で結果が返る
     s = difflib.SequenceMatcher(None, normalized_str1, normalized_str2).ratio()
@@ -82,11 +85,11 @@ def get_sequence_matcher_coef(test_1, text_2):
     return s
 
 
-async def report_error(message, error_msg):
+async def report_error(message: discord.Message, error_msg: str):
     print(message, error_msg)
     em = discord.Embed(title=" ", description="─────────\n" , color=0xDEED33)
-    avator_url = client.user.default_avatar_url or client.user.default_avatar_url
-    avator_url = avator_url.replace(".webp?", ".png?")
+    avator_url: str = client.user.default_avatar_url or client.user.default_avatar_url
+    avator_url: str = avator_url.replace(".webp?", ".png?")
     em.set_author(name='朱伊', icon_url=avator_url)
 
     em.add_field(name="返信相手", value= "<@" + message.author.id + ">", inline=False)
@@ -100,13 +103,13 @@ async def report_error(message, error_msg):
         print(traceback.format_tb(e.__traceback__))
 
 
-def get_data_kaiwa_post_path(message):
+def get_data_kaiwa_post_path(message: discord.Message) -> str:
     id = message.author.id
     return 'DataMemberPostInfo/' + str(id) + ".json"
 
 
-def has_post_data(message):
-    path = get_data_kaiwa_post_path(message)
+def has_post_data(message: discord.Message) -> bool:
+    path: str = get_data_kaiwa_post_path(message)
     if not os.path.exists(path):
         return False
     else:
@@ -116,15 +119,15 @@ def has_post_data(message):
 
 
 
-async def is_syougou_up(message):
+async def is_syougou_up(message: discord.Message):
     pass
 
 
-async def show_level_infomation(message, exp, default="会話レベル情報"):
+async def show_level_infomation(message: discord.Message, exp: int, default="会話レベル情報"):
 
-    paidinfo = None
+    paidinfo: dict = None
     try:
-        path = RegistEtherMemberInfo.get_data_memberpaid_path(message, message.author.id)
+        path: str = RegistEtherMemberInfo.get_data_memberpaid_path(message, message.author.id)
         print(path)
         with open(path, "r") as fr2:
             paidinfo = json.load(fr2)
@@ -132,12 +135,12 @@ async def show_level_infomation(message, exp, default="会話レベル情報"):
         pass
 
     try:
-        lv = get_lv_from_exp(exp)
+        lv: int = get_lv_from_exp(exp)
         em = discord.Embed(title="", description="", color=0xDEED33)
         em.add_field(name=default, value= "<@" + message.author.id + ">", inline=False)
 
-        avator_url = message.author.avatar_url or message.author.default_avatar_url
-        avator_url = avator_url.replace(".webp?", ".png?")
+        avator_url: str = message.author.avatar_url or message.author.default_avatar_url
+        avator_url: str = avator_url.replace(".webp?", ".png?")
 
         try:
             if message.content == "!rankinfo":
@@ -160,10 +163,10 @@ async def show_level_infomation(message, exp, default="会話レベル情報"):
 
         # em.set_author(name=" ", icon_url=avator_url)
         em.add_field(name="Lv", value=str(lv), inline=True)
-        amari = exp-LV_TO_EXP_LIST[lv][1]
-        nnext = LV_TO_EXP_LIST[lv+1][1]-LV_TO_EXP_LIST[lv][1]
-        str_cur_per_nex = str(int(amari)) + "/" + str(int(nnext)) + " EX"
-        int_cur_per_nex = int(amari / nnext * 200)
+        amari: int = exp-LV_TO_EXP_LIST[lv][1]
+        nnext: int = LV_TO_EXP_LIST[lv+1][1]-LV_TO_EXP_LIST[lv][1]
+        str_cur_per_nex: str = str(int(amari)) + "/" + str(int(nnext)) + " EX"
+        int_cur_per_nex: int = int(amari / nnext * 200)
         if int_cur_per_nex < 0:
             int_cur_per_nex = 0
         if int_cur_per_nex > 200:
@@ -181,16 +184,16 @@ async def show_level_infomation(message, exp, default="会話レベル情報"):
         print(traceback.format_tb(e.__traceback__))
         print("show_level_infomation 中エラー")
 
-async def command_show_level_infomation(message, author):
+async def command_show_level_infomation(message: discord.Message, author: discord.Member):
 
     try:
         if not has_post_data(message):
             await make_one_kaiwa_post_data(message)
 
-        path = get_data_kaiwa_post_path(message)
+        path: str = get_data_kaiwa_post_path(message)
         print(path)
         with open(path, "r") as fr:
-            postinfo = json.load(fr)
+            postinfo: dict = json.load(fr)
 
         await show_level_infomation(message, postinfo["exp"])
 
@@ -200,7 +203,7 @@ async def command_show_level_infomation(message, author):
         print(traceback.format_tb(e.__traceback__))
         print("show_level_infomation 中エラー")
 
-def is_level_command_condition(message):
+def is_level_command_condition(message: discord.Message) -> bool:
     if re.match("^!rankinfo$", message):
         return True
     if re.match("^!rank$", message):
@@ -209,7 +212,7 @@ def is_level_command_condition(message):
     return False
 
 
-async def add_level_role(roles, author, level):
+async def add_level_role(roles, author: discord.Member, level: int):
     # そのサーバーが持ってる役職
     roles_list = roles
     for r in roles_list:
@@ -229,16 +232,16 @@ async def add_level_role(roles, author, level):
             print(traceback.format_exception(t,v,tb))
             print(traceback.format_tb(e.__traceback__))
 
-async def all_member_add_level_role(message):
+async def all_member_add_level_role(message: discord.Message):
     for m in list(message.channel.server.members):
 
-        id = m.id
+        id: str = m.id
         path = 'DataMemberPostInfo/' + str(id) + ".json"
         try:
             if os.path.exists(path):
                 with open(path, "r") as fr:
-                    postinfo = json.load(fr)
-                    post_level = get_lv_from_exp(postinfo["exp"])
+                    postinfo: dict = json.load(fr)
+                    post_level: int = get_lv_from_exp(postinfo["exp"])
                     await add_level_role(message.channel.server.roles, m, post_level)
         except Exception as e:
             t, v, tb = sys.exc_info()
@@ -248,7 +251,7 @@ async def all_member_add_level_role(message):
 
 
 # 繰り返し対処用。反復を圧縮する
-def hanpukuword_to_onceword(text):
+def hanpukuword_to_onceword(text: str) -> str:
     ma = re.search(r"(.{2,30})(\1){1,50}", text)
     if ma:
         result = text.replace(ma.group(0), ma.group(1))
@@ -260,7 +263,7 @@ def hanpukuword_to_onceword(text):
         return text
 
 # 絵文字を除去
-def remove_emoji(src_str):
+def remove_emoji(src_str: str) -> str:
     ret_str = ""
 
     # 正規表現パターンを構築
@@ -290,9 +293,9 @@ def remove_emoji(src_str):
     return ret_str
 
 # 投稿を各チャンネルで保持
-update_kaiwa_post_hasu = {}
+update_kaiwa_post_hasu: dict = {}
 
-async def update_one_kaiwa_post_data(message):
+async def update_one_kaiwa_post_data(message: discord.Message):
 
     try:
         # print("キャッシュ")
@@ -312,7 +315,7 @@ async def update_one_kaiwa_post_data(message):
             postinfo = json.load(fr)
 
         # ゴミ除去
-        text = message.content.strip()
+        text: str = message.content.strip()
 
         print("元:" + text)
         try:
@@ -325,10 +328,10 @@ async def update_one_kaiwa_post_data(message):
         print("後:" + text)
 
         # 経験値の加算係数を出す
-        minimum_coef = 1
+        minimum_coef: float = 1
         # 過去の20投稿との比較で最低の係数を出す（類似したものがあるほど係数が低くなる)
         for hist in postinfo["posthistory"]:
-            temp_coef = 1 - get_sequence_matcher_coef(hist.replace("\n", ""), text.replace("\n", ""))
+            temp_coef: float = 1 - get_sequence_matcher_coef(hist.replace("\n", ""), text.replace("\n", ""))
             # print("どうか:" + str(temp_coef) + hist + ", " + text)
             if temp_coef < minimum_coef:
                 minimum_coef = temp_coef
@@ -342,13 +345,13 @@ async def update_one_kaiwa_post_data(message):
 
         print("最低係数:" + str(minimum_coef))
 
-        base_experience = 60
-        add_experience = int(minimum_coef * base_experience)
+        base_experience: int = 60
+        add_experience: int = int(minimum_coef * base_experience)
         if add_experience < 0:
             add_experience = 0
 
         # そのテキストのutf8バイト数を超えないようにする
-        kaiwa_utf8_byte_count = EastAsianWidthCounter.get_east_asian_width_count_effort(text)
+        kaiwa_utf8_byte_count: int = EastAsianWidthCounter.get_east_asian_width_count_effort(text)
         # 6バイトまでは判定しない
         if kaiwa_utf8_byte_count <= 6:
             kaiwa_utf8_byte_count = 0
@@ -449,7 +452,7 @@ async def update_one_kaiwa_post_data(message):
 
 
 # 1人分のメンバーデータの作成
-async def make_one_kaiwa_post_data(message):
+async def make_one_kaiwa_post_data(message: discord.Message):
     try:
         postinfo = {
             "user_id": message.author.id,
@@ -473,7 +476,7 @@ async def make_one_kaiwa_post_data(message):
 
 
 
-async def push_kaiwa_post(message, text):
+async def push_kaiwa_post(message: discord.Message, text: str):
 
     postinfo = await update_one_kaiwa_post_data(message)
     if postinfo != None:

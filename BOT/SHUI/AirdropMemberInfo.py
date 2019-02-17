@@ -20,7 +20,12 @@ import discord
 
 import WalletAddressDeleter
 
-async def report_error(message, error_msg):
+
+if False:
+    client: discord.Client = discord.Client()
+
+
+async def report_error(message: discord.Message, error_msg: str) -> None:
     em = discord.Embed(title=" ", description="─────────\n" , color=0xDEED33)
 
     avator_url = client.user.default_avatar_url or client.user.default_avatar_url
@@ -35,7 +40,7 @@ async def report_error(message, error_msg):
     except:
         print(sys.exc_info())
 
-def get_data_memberinfo_path(message, id):
+def get_data_memberinfo_path(message: discord.Message, id):
     return 'AirdropMemberInfo/' + str(id) + ".json"
 
 def get_data_memberpaid_path(message, id):

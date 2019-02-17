@@ -20,6 +20,10 @@ import traceback
 
 import WalletAddressDeleter
 
+if False:
+    client: discord.Client = discord.Client()
+
+
 async def report_error(message, error_msg):
     em = discord.Embed(title=" ", description="─────────\n" , color=0xDEED33)
     avator_url = client.user.default_avatar_url or client.user.default_avatar_url
@@ -40,17 +44,17 @@ async def report_error(message, error_msg):
         print(traceback.format_tb(e.__traceback__))
         print(sys.exc_info())
 
-def get_data_memberinfo_path(message, id):
+def get_data_memberinfo_path(message: discord.Message, id: str):
     return 'DataMemberInfo/' + str(id) + ".json"
 
-def get_data_memberpaid_path(message, id):
+def get_data_memberpaid_path(message: discord.Message, id: str):
     return 'DataMemberPaid/' + str(id) + ".json"
 
-def get_data_ticketinfo_path(message, id):
+def get_data_ticketinfo_path(message: discord.Message, id: str):
     return 'DataTicketInfo/' + str(id) + ".json"
 
 
-async def decrement_one_member_omikuji_data(message, id):
+async def decrement_one_member_omikuji_data(message: discord.Message, id: str):
     try:
         has = await has_member_data(message, id, False)
         if not has:
@@ -83,7 +87,7 @@ async def decrement_one_member_omikuji_data(message, id):
     return None
 
 # 1枚増やすが、５枚以上は増えない。又1枚増えると、６時間は増えない
-async def increment_one_member_omikuji_data(message, id):
+async def increment_one_member_omikuji_data(message: discord.Message, id: str):
 
     try:
         has = await has_member_data(message, id, False)
@@ -139,7 +143,7 @@ async def increment_one_member_omikuji_data(message, id):
 
     return None
 
-async def get_count_one_member_omikuji_data(message, id):
+async def get_count_one_member_omikuji_data(message: discord.Message, id: str):
     try:
         has = await has_member_data(message, id, False)
         if not has:
@@ -159,7 +163,7 @@ async def get_count_one_member_omikuji_data(message, id):
     return None
 
 
-async def update_one_member_data(message, address, id):
+async def update_one_member_data(message: discord.Message, address: str, id: str) -> bool:
     try:
 
         path = get_data_memberinfo_path(message, id)
@@ -182,7 +186,7 @@ async def update_one_member_data(message, address, id):
     return False
 
 # 1人分のメンバーデータの作成
-async def make_one_member_data(message, address, id):
+async def make_one_member_data(message: discord.Message, address: str, id: str) -> bool:
     try:
         memberinfo = {
             "eth_address": "",
@@ -207,7 +211,7 @@ async def make_one_member_data(message, address, id):
     return False
 
 
-async def make_one_ticketinfo_data(message, address, id):
+async def make_one_ticketinfo_data(message: discord.Message, address: str, id: str) -> bool:
     try:
         ticketinfo = {
             "omikuji_ticket_count": 0,
@@ -231,7 +235,7 @@ async def make_one_ticketinfo_data(message, address, id):
 
 
 
-async def make_one_member_paid(message, id):
+async def make_one_member_paid(message: discord.Message, id: str) -> bool:
     try:
         paidinfo = {
             "kaiwa_paid_lv": 0,
@@ -262,7 +266,7 @@ async def make_one_member_paid(message, id):
     return False
 
 
-async def regist_one_member_data(message, id):
+async def regist_one_member_data(message: discord.Message, id: str):
 
     address = message.content.strip()
     # イーサアドレス登録だ
@@ -298,7 +302,7 @@ async def regist_one_member_data(message, id):
         await report_error(message, "イーサアドレスのパターンではありません。")
         return
 
-def is_regist_one_member_data_condition(message):
+def is_regist_one_member_data_condition(message: discord.Message) -> bool:
     if message.channel == get_ether_regist_channel(message):
         print("イーサアドレス登録")
         return True
@@ -307,7 +311,7 @@ def is_regist_one_member_data_condition(message):
     return False
 
 
-def get_ether_regist_channel(message):
+def get_ether_regist_channel(message: discord.Message) -> discord.Channel:
     for ch in message.channel.server.channels:
         if "お財布登録" in str(ch) or "eth-address" in str(ch):
             return ch
@@ -315,7 +319,7 @@ def get_ether_regist_channel(message):
     return None
 
 
-async def show_another_member_data(message):
+async def show_another_member_data(message: discord.Message):
     print("another_member_data_show_command")
     try:
         m = re.search(r"^!memberinfo <@(\d+?)>$", message.content)
@@ -337,7 +341,7 @@ async def show_another_member_data(message):
         pass
 
 
-async def show_another_ticket_data(message):
+async def show_another_ticket_data(message: discord.Message):
     print("another_ticket_data_show_command")
     try:
         m = re.search(r"^!ticketinfo <@(\d+?)>$", message.content)
@@ -346,8 +350,8 @@ async def show_another_ticket_data(message):
             targetg_member_id = m.group(1)
             if targetg_member_id:
                 print("サーバー")
-                svr = message.author.server
-                target_author = svr.get_member(targetg_member_id)
+                svr: discord.Server = message.author.server
+                target_author: discord.User = svr.get_member(targetg_member_id)
                 print("おーさー" + str(target_author))
                 if target_author:
                     await show_one_ticket_data(message, target_author.id)
@@ -360,7 +364,7 @@ async def show_another_ticket_data(message):
 
 
 
-async def show_one_member_data(message, id):
+async def show_one_member_data(message: discord.Message, id: str) -> bool:
     try:
         path = get_data_memberinfo_path(message, id)
         has = await has_member_data(message, id, True)
@@ -378,7 +382,7 @@ async def show_one_member_data(message, id):
             paidinfo = json.load(fr)
 
         em = discord.Embed(title="", description="", color=0xDEED33)
-        author = message.server.get_member(id)
+        author: discord.Member = message.server.get_member(id)
         avator_url = None
         if author:
             avator_url = author.avatar_url or author.default_avatar_url
@@ -405,7 +409,7 @@ async def show_one_member_data(message, id):
     return False
 
 
-async def show_one_ticket_data(message, id):
+async def show_one_ticket_data(message: discord.Message, id: str):
     try:
         path = get_data_ticketinfo_path(message, id)
         has = await has_member_data(message, id, True)
@@ -418,7 +422,7 @@ async def show_one_ticket_data(message, id):
             ticketinfo = json.load(fr)
 
         em = discord.Embed(title="", description="", color=0xDEED33)
-        author = message.server.get_member(id)
+        author: discord.Member = message.server.get_member(id)
         avator_url = None
         if author:
             avator_url = author.avatar_url or author.default_avatar_url
@@ -446,7 +450,7 @@ async def show_one_ticket_data(message, id):
 
 
 
-def is_show_one_member_data_condition(message):
+def is_show_one_member_data_condition(message: discord.Message) -> bool:
     msg = str(message.content).strip()
     if "!memberinfo" == msg:
         return True
@@ -454,13 +458,13 @@ def is_show_one_member_data_condition(message):
     return False
 
 
-def is_show_another_member_data_condition(message):
+def is_show_another_member_data_condition(message: discord.Message) -> bool:
     msg = str(message.content).strip()
     if re.match(r"^!memberinfo <@\d+?>$", msg):
         return True
 
 
-def is_show_one_ticket_data_condition(message):
+def is_show_one_ticket_data_condition(message: discord.Message) -> bool:
     msg = str(message.content).strip()
     if "!ticketinfo" == msg:
         return True
@@ -468,18 +472,18 @@ def is_show_one_ticket_data_condition(message):
     return False
 
 
-def is_show_another_ticket_data_condition(message):
+def is_show_another_ticket_data_condition(message: discord.Message) -> bool:
     msg = str(message.content).strip()
     if re.match(r"^!ticketinfo <@\d+?>$", msg):
         return True
 
 
 
-async def has_member_data(message, id, withMessage):
+async def has_member_data(message: discord.Message, id: str, withMessage: bool) -> bool:
     path = get_data_memberinfo_path(message, id)
     if not os.path.exists(path):
         if withMessage:
-            ch = get_ether_regist_channel(message)
+            ch: discord.Channel = get_ether_regist_channel(message)
             await report_error(message, "登録情報がありません。\n" + "<#" + ch.id + ">" + " に\nご自身の **MyEtherWallet** など、\nエアドロが受け取れるETHウォレットアドレスを投稿し、\n**コインを受け取れるように**してください。")
         return False
     else:

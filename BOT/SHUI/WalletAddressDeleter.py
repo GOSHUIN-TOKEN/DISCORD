@@ -6,15 +6,19 @@
 
 # 正規表現
 import re
+import discord
+
+if False:
+    client: discord.Client = discord.Client()
 
 # Wavesアドレスはダメなチャンネル
-nopermit_channnel_of_waves_address = ["^雑談$", "^english.$", "ルーレット.+", "^botでランクを確認$", "^★おみくじコーナー.+", "^ロゴ投稿場", "^招待人数確認", "^bdaチャート"]
+nopermit_channnel_of_waves_address: list = ["^雑談$", "^english.$", "ルーレット.+", "^botでランクを確認$", "^★おみくじコーナー.+", "^ロゴ投稿場", "^招待人数確認", "^bdaチャート"]
 
 # Etherアドレスはダメなチャンネル
-nopermit_channnel_of_ether_address = ["^雑談$", "^english.$", "ルーレット.+", "^botでランクを確認$", "^★おみくじコーナー.+", "^ロゴ投稿場", "^招待人数確認", "^bdaチャート", "^新規の方のみairdrop", "^new-people-only-airdrop",]
+nopermit_channnel_of_ether_address: list = ["^雑談$", "^english.$", "ルーレット.+", "^botでランクを確認$", "^★おみくじコーナー.+", "^ロゴ投稿場", "^招待人数確認", "^bdaチャート", "^新規の方のみairdrop", "^new-people-only-airdrop",]
 
 # Wavesウォレットのアドレスのパターン
-def is_message_waves_pattern(message):
+def is_message_waves_pattern(message: str) -> bool:
     message = message.strip()
     if len(message) != 35:
         return False
@@ -25,7 +29,7 @@ def is_message_waves_pattern(message):
     return False
 
 # Etherウォレットのアドレスのパターン
-def is_message_ether_pattern(message):
+def is_message_ether_pattern(message) -> bool:
     message = message.strip()
     if len(message) != 42:
         return False
@@ -36,7 +40,7 @@ def is_message_ether_pattern(message):
     return False
 
 
-def is_nopermit_waves_channel(channel_name):
+def is_nopermit_waves_channel(channel_name: str) -> bool:
     cn_name = str(channel_name)
     # wavesアドレスが許されないチャンネルのいずれかか？
     for pattern in nopermit_channnel_of_waves_address:
@@ -45,7 +49,7 @@ def is_nopermit_waves_channel(channel_name):
 
     return False
 
-def is_nopermit_ether_channel(channel_name):
+def is_nopermit_ether_channel(channel_name: str) -> bool:
     cn_name = str(channel_name)
     # etherアドレスが許されないチャンネルのいずれかか？
     for pattern in nopermit_channnel_of_ether_address:
@@ -55,7 +59,7 @@ def is_nopermit_ether_channel(channel_name):
     return False
 
 
-async def violation_wallet_address_message(message):
+async def violation_wallet_address_message(message: discord.Message) -> bool:
 
     is_delete = False
 
