@@ -7,7 +7,7 @@
 import os
 
 
-def get_discord_bot_token():
+def get_discord_bot_token() -> str:
     # 本番用のみが有効なら本番用の接続トークンを返す
     BOT_TOKEN = os.getenv("DISCORD_SHUI_TOKEN", r'')
     if BOT_TOKEN != "":

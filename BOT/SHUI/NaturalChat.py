@@ -18,7 +18,20 @@ import discord
 import EnvironmentVariable
 import ChatLevelUp
 
+
 Kernel32 = ctypes.windll.Kernel32
+
+
+def CreateObject():
+    params = get_docomo_naturalchat_key()
+    sm1 = NaturalChatMessage(params["KEY"], params["appid_01"])
+    sm2 = NaturalChatMessage(params["KEY"], params["appid_02"])
+    sm3 = NaturalChatMessage(params["KEY"], params["appid_03"])
+    sm4 = NaturalChatMessage(params["KEY"], params["appid_04"])
+    sm5 = NaturalChatMessage(params["KEY"], params["appid_05"])
+    return sm1, sm2, sm3, sm4, sm5
+
+
 
 def get_docomo_naturalchat_key():
     KEY = os.getenv("DISCORD_DOCOMO_NATURALCHAT_KEY", r'')
@@ -33,14 +46,14 @@ def get_docomo_naturalchat_key():
 class NaturalChatMessage:
     """自然対話用のクラス"""
 
-    def __init__(self, KEY, appid):
-        self.KEY = KEY
-        self.appid = appid
-        self.lastMode = "dialog"
-        self.appear_zatsudan_count = 0
+    def __init__(self, KEY: str, appid: str):
+        self.KEY: str = KEY
+        self.appid: str = appid
+        self.lastMode: str = "dialog"
+        self.appear_zatsudan_count: int = 0
 
-    async def get_naturalchat_mesasge(self, message, override_word = "", need_lock = True):
-        KEY = self.KEY
+    async def get_naturalchat_mesasge(self, message: discord.Message, override_word: str = "", need_lock: bool = True) -> str:
+        KEY: str = self.KEY
 
         mutex = None
         try:
@@ -56,7 +69,7 @@ class NaturalChatMessage:
             date = datetime.datetime.now()
             datastr = date.strftime("%Y-%m-%d %H:%M:%S")
 
-            text = message.content
+            text: str = message.content
             if override_word:
                 text = override_word
 
@@ -68,7 +81,7 @@ class NaturalChatMessage:
                     print("ロック待ちエラー")
                     return "う～ん..."
 
-            payload = {'language':'ja-JP', 'botId':'Chatting','appId':appid,'voiceText':text, 
+            payload: dict = {'language':'ja-JP', 'botId':'Chatting','appId':appid,'voiceText':text, 
                 "clientData":{
                       "option":{
                         "nickname":norm_nickname,
@@ -81,15 +94,15 @@ class NaturalChatMessage:
                   "appSendTime": datastr
             }
 
-            headers = {'Content-type': 'application/json'}
+            headers: dict = {'Content-type': 'application/json'}
 
             #送信
-            r = requests.post(url, data=json.dumps(payload), headers=headers)
+            r: requests.Response = requests.post(url, data=json.dumps(payload), headers=headers)
 
-            data = r.json()
+            data: str = r.json()
             # print(data)
-            response = data['systemText']['utterance'] #変更
-            command = data['command']
+            response: str = data['systemText']['utterance'] #変更
+            command: str = data['command']
             self.lastMode = base64.b64decode( command ).decode('utf-8')
 
             if 'srtr' in self.lastMode:
@@ -102,7 +115,7 @@ class NaturalChatMessage:
             msg = ""
             if response =="読みが不明か名詞ではありませんので、別の言葉でお願いします。" and (not "しりとり" in text):
                 # 必ず矯正してから
-                sm5.lastMode = "dialog"
+                sm5.lastMode: str = "dialog"
                 # 一般の返答を挟む
                 response = await sm5.get_naturalchat_mesasge(message, "", False)
                 # メッセージのチャンネルに対応したキャッシュにたしこむ
@@ -136,19 +149,19 @@ class NaturalChatMessage:
             return "何だかわたくし、体調がすぐれませんわ..."
 
 
-    def get_normalized_nickname(self, nickname):
+    def get_normalized_nickname(self, nickname: str) -> str:
         #会話の入力
         norm_nickname = ""
         for c in nickname:
-            str = c + ''
-            l = len(str.encode('utf8'))
+            mystr = c + ''
+            l = len(mystr.encode('utf8'))
             if (l) < 4: # 拡張領域文字だとDoCoMoの方が扱えない
-                norm_nickname += str
+                norm_nickname += mystr
 
         return norm_nickname
 
     # レスポンス結果の修正
-    def modify_response(self, response):
+    def modify_response(self, response: str) -> str:
         #シリトリモードだと一人称が変になるので強引に修正
         if self.lastMode == 'srtr':
             response = response.replace("ボクの勝ち", "わたくしの勝ち")
@@ -163,10 +176,10 @@ class NaturalChatMessage:
 
         return response
 
-    def get_lastmode(self):
+    def get_lastmode(self) -> str:
         return self.lastMode
 
-    def decrement_appear_zatsudan_cnt(self, msg):
+    def decrement_appear_zatsudan_cnt(self, msg: str) -> int:
 
         """
         # 朱伊は自分の名前を呼ばれるとしばらくは雑談に登場を継続する
@@ -190,16 +203,8 @@ class NaturalChatMessage:
 
 
 
-def CreateObject():
-    params = get_docomo_naturalchat_key()
-    sm1 = NaturalChatMessage(params["KEY"], params["appid_01"])
-    sm2 = NaturalChatMessage(params["KEY"], params["appid_02"])
-    sm3 = NaturalChatMessage(params["KEY"], params["appid_03"])
-    sm4 = NaturalChatMessage(params["KEY"], params["appid_04"])
-    sm5 = NaturalChatMessage(params["KEY"], params["appid_05"])
-    return sm1, sm2, sm3, sm4, sm5
 
 
 
-def NaturalChattableChannelRegex():
+def NaturalChattableChannelRegex() -> list:
     return ["^.*見習い巫女.*", "^.*おみくじ.*" ]

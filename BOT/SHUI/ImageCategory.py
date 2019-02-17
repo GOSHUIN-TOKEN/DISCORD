@@ -22,14 +22,17 @@ import traceback
 
 import JapaneseOmikuji
 
+from typing import Union, List
+
+if False:
+    client: discord.Client = discord.Client()
 
 
-
-def get_docomo_naturalchat_key():
+def get_docomo_naturalchat_key() -> dict:
     KEY = os.getenv("DISCORD_DOCOMO_IMAGERECOGNITION_KEY", r'')
     return {"KEY":KEY}
 
-def get_image_type(fname):
+def get_image_type(fname: str) -> str:
     if fname.endswith(".png"):
         return 'image/png'
     if fname.endswith(".jpg"):
@@ -39,7 +42,7 @@ def get_image_type(fname):
 
     return 'image/png'
 
-def get_image_ext(fname):
+def get_image_ext(fname: str) -> str:
     if fname.endswith(".png"):
         return '.png'
     if fname.endswith(".jpg"):
@@ -51,26 +54,26 @@ def get_image_ext(fname):
 
 
 #画像データを投げて、カテゴリの候補上位5つを取得 (カテゴリ認識)
-def getImageCategory(fname, modelName="scene"):
+def getImageCategory(fname: str, modelName="scene"):
 
-    APIKEY = get_docomo_naturalchat_key()["KEY"]
-    url = 'https://api.apigw.smt.docomo.ne.jp/imageRecognition/v1/concept/classify/'
-    params = {'APIKEY': APIKEY}
+    APIKEY: str = get_docomo_naturalchat_key()["KEY"]
+    url: str = 'https://api.apigw.smt.docomo.ne.jp/imageRecognition/v1/concept/classify/'
+    params: dict = {'APIKEY': APIKEY}
 
     with open(fname, 'br') as f:
         data = f.read()
 
-    files = {
+    files: dict = {
         'modelName': (None, modelName, 'text/plain; charset=utf-8'),
         'image': (os.path.basename(fname), data, get_image_type(fname))
     }
 
-    result = requests.post(
+    result: requests.Response = requests.post(
         url = url,
         params = params,
         files = files
     )
-    data = result.json()
+    data: str = result.json()
     print(data)
     if "candidates" in data:
         json = data["candidates"]
@@ -109,26 +112,26 @@ def getImageCategory(fname, modelName="scene"):
 
 
 #画像データを投げて、カテゴリの候補上位5つを取得 (カテゴリ認識)
-def getImageScene(fname, modelName, message):
+def getImageScene(fname: str, modelName: str, message: discord.Message):
 
-    APIKEY = get_docomo_naturalchat_key()["KEY"]
-    url = 'https://api.apigw.smt.docomo.ne.jp/imageRecognition/v1/concept/classify/'
-    params = {'APIKEY': APIKEY}
+    APIKEY: str = get_docomo_naturalchat_key()["KEY"]
+    url: str = 'https://api.apigw.smt.docomo.ne.jp/imageRecognition/v1/concept/classify/'
+    params: dict = {'APIKEY': APIKEY}
 
     with open(fname, 'br') as f:
         data = f.read()
 
-    files = {
+    files: dict = {
         'modelName': (None, modelName, 'text/plain; charset=utf-8'),
         'image': (os.path.basename(fname), data, get_image_type(fname))
     }
 
-    result = requests.post(
+    result: requests.Response = requests.post(
         url = url,
         params = params,
         files = files
     )
-    data = result.json()
+    data: str = result.json()
     # print(data)
     if "candidates" in data:
         json = data["candidates"]
@@ -197,7 +200,7 @@ def getImageScene(fname, modelName, message):
 
     return None
 
-def is_analyze_condition(message):
+def is_analyze_condition(message: discord.Message) -> Union[str, None]:
     try:
         attach_list = message.attachments
         if len(attach_list) > 0:
@@ -213,7 +216,7 @@ def is_analyze_condition(message):
 
 
 
-async def download(url, file_name):
+async def download(url: str, file_name: str) -> str:
     try:
         # open in binary mode
         with open(file_name, "wb") as fw:
@@ -229,7 +232,7 @@ async def download(url, file_name):
     return None
 
 
-async def analyze_image(message, url):
+async def analyze_image(message: discord.Message, url: str):
     try:
         # ビンゴは反応しない
         if "ビンゴ" in message.channel.name:
@@ -323,7 +326,7 @@ async def analyze_image(message, url):
 
 
 
-async def replay_image_message(message, word, isStrong = True):
+async def replay_image_message(message: discord.Message, word: str, isStrong = True):
     print("画像への返事")
     if isStrong:
         #await client.send_message(message.channel, word + " ですね！")
@@ -342,7 +345,7 @@ async def replay_image_message(message, word, isStrong = True):
 
 
 # 現在のunixタイムを出す
-pre_datetime_unix_time = 0
+pre_datetime_unix_time: int = 0
 
 def delete_old_image(message):
 
