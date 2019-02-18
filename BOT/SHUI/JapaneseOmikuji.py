@@ -23,6 +23,8 @@ import copy
 import RegistEtherMemberInfo
 import EastAsianWidthCounter
 
+if False:
+    client: discord.Client = discord.Client()
 
 
 def get_data_inviteinfo_path() -> str:
@@ -88,7 +90,7 @@ def is_omikuji_command(text: str) -> bool:
     if text == 'おみくじ' or text == 'みくじ' :
         return True
 
-    okword_list = [
+    okword_list: list = [
         'みくじ引いて', 'みくじを引いて',
         'みくじひいて', 'みくじをひいて',
         'みくじ引け', 'みくじを引け',
@@ -122,12 +124,12 @@ def is_omikuji_command(text: str) -> bool:
 
 DirDataJapaneseOmikuji = "DataJapaneseOmikuji"
 
-def get_date_omikuji_file(date):
+def get_date_omikuji_file(date: str) -> str:
     global DirDataJapaneseOmikuji
     fullpath = DirDataJapaneseOmikuji + "/" + date + ".json"
     return fullpath
 
-def is_exist_today_omikuji_file(date):
+def is_exist_today_omikuji_file(date: str) -> bool:
     fullpath = ""
     try:
         fullpath = get_date_omikuji_file(date)
@@ -140,7 +142,7 @@ def is_exist_today_omikuji_file(date):
 
     return False
 
-def get_today_omikuji_data(date):
+def get_today_omikuji_data(date: str) -> dict:
     fullpath = get_date_omikuji_file(date)
     try:
         with open(fullpath,'r') as fr:
@@ -151,11 +153,11 @@ def get_today_omikuji_data(date):
 
     return False
 
-def save_today_omikuji_data(date, dict):
+def save_today_omikuji_data(date: str, dic: dic) -> bool:
     fullpath = get_date_omikuji_file(date)
 
     try:
-        json_data = json.dumps(dict, indent=4)
+        json_data = json.dumps(dic, indent=4)
         with open(fullpath,'w') as fw:
             fw.write(json_data)
         return True
@@ -163,7 +165,7 @@ def save_today_omikuji_data(date, dict):
         pass
     return False
 
-def get_busy_omikuji_message(message):
+def get_busy_omikuji_message(message: discord.Message) -> discord.Embed:
     em = discord.Embed(title=" ", description="─────────\n" + message.author.display_name, color=0xDEED33)
 
     avator_url = client.user.default_avatar_url or client.user.default_avatar_url
@@ -173,7 +175,7 @@ def get_busy_omikuji_message(message):
     em.add_field(name="只今集計中です!!", value="─────────", inline=False)
     return em
 
-def get_error_omikuji_message(message):
+def get_error_omikuji_message(message: discord.Message) -> discord.Embed:
     em = discord.Embed(title=" ", description="─────────\n" + message.author.display_name, color=0xDEED33)
     avator_url = client.user.default_avatar_url or client.user.default_avatar_url
     avator_url = avator_url.replace(".webp?", ".png?")
@@ -184,13 +186,13 @@ def get_error_omikuji_message(message):
 
 
 
-def get_today_datestring(message):
+def get_today_datestring(message: discord.Message) -> str:
     #今日の日付の作成
     date = message.timestamp.now()
     strdate = str(date.year) + '{0:02d}'.format(date.month) + '{0:02d}'.format(date.day)
     return strdate
 
-def is_busy_timestamp(message):
+def is_busy_timestamp(message: discord.Message) -> bool:
     #今日の日付の作成
     date = message.timestamp.now()
     if date.hour == 23 and date.minute == 59 and date.second >= 55:
@@ -200,7 +202,7 @@ def is_busy_timestamp(message):
 
     return False
 
-async def get_embedded_omikuji_object(message):
+async def get_embedded_omikuji_object(message: discord.Message):
 
     has = await RegistEtherMemberInfo.has_member_data(message, message.author.id, True)
     print("メンバー情報がある？" + str(has))
@@ -345,17 +347,17 @@ async def get_embedded_omikuji_object(message):
 
 
 
-async def say_embedded_omikuji_message(message):
+async def say_embedded_omikuji_message(message: discord.Message) -> str:
     if is_omikuji_command(message.content):
-        em, deme = await get_embedded_omikuji_object(message)
+        em: discord.Embed, deme: str = await get_embedded_omikuji_object(message)
         if em != None:
             await client.send_message(message.channel, embed=em)
             return deme
 
 
 # 会話からおみくじを得る
-async def get_omikuji_from_kaiwa(message, override_message = ""):
-    stripped_msg = message.content.strip()
+async def get_omikuji_from_kaiwa(message: discord.Message, override_message = "") -> None:
+    stripped_msg: str = message.content.strip()
     if override_message:
         stripped_msg = override_message
 
@@ -390,12 +392,12 @@ async def get_omikuji_from_kaiwa(message, override_message = ""):
 
 
 
-def is_report_command_condition(command):
+def is_report_command_condition(command: str) -> bool:
     if re.match("^!omikujiinfo \d{8}$", command):
         return True
 
 
-def report_command_one_key_name(json_data, key, message):
+def report_command_one_key_name(json_data: dict, key: str, message: discord.Message) -> str:
 
     member_id_list = []
     for mem in list(message.channel.server.members):
@@ -411,7 +413,7 @@ def report_command_one_key_name(json_data, key, message):
 
     return " , ".join(msg)
 
-def report_command_one_key_eth(json_data, key, message):
+def report_command_one_key_eth(json_data: dict, key: str, message: discord.Message) -> str:
 
     member_id_list = []
     for mem in list(message.channel.server.members):
@@ -439,18 +441,16 @@ def report_command_one_key_eth(json_data, key, message):
 
     return '[ "' + '" , "'.join(msg) + '" ]'
 
-async def report_command(message):
+async def report_command(message: discord.Message) -> None:
     if is_report_command_condition(message.content):
         m = re.search(r"^!omikujiinfo (\d{8})$", message.content)
-        date = m.group(1)
-        fullpath = get_date_omikuji_file(date)
+        date: str = m.group(1)
+        fullpath: str = get_date_omikuji_file(date)
         if os.path.exists(fullpath):
-            json_data = get_today_omikuji_data(date)
+            json_data: dict = get_today_omikuji_data(date)
             ret = report_command_one_key_name(json_data, "大吉", message)
             await client.send_message(message.channel, ret)
             ret = report_command_one_key_eth(json_data, "大吉", message)
             await client.send_message(message.channel, ret)
         else:
             await client.send_message(message.channel, "指定の年月日のおみくじ情報はありません。")
-
-

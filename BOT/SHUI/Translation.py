@@ -35,25 +35,6 @@ def translation_method_post(text: str, src_lang: str, dst_lang: str) -> str:
     return ""
 
 
-# 少し早いがエンコードされた状態でURL含めて2000文字ほどという制限がある。
-def translation_method_get(text: str, src_lang: str, dst_lang: str) -> str:
-    text = urllib.parse.quote(text)
-
-    script_url: str = r"https://script.google.com/macros/s/" + get_gas_api_key() + "/exec"
-
-    request_script_url = "{script_url}?text={text}&source={source}&target={target}".format(script_url=script_url,text=text,source=src_lang,target=dst_lang)
-
-    req = urllib.request.Request(request_script_url)
-    with urllib.request.urlopen(req) as res:
-        byte_result = res.read()
-        answer = byte_result.decode(encoding='utf-8')
-        return answer
-
-    return ""
-
-
 if __name__ == "__main__":
     result = translation_method_post("りんご", "ja", "en")
     print(result)
-    #result = translation_method_get("りんご", "ja", "en")
-    #print(result)

@@ -14,7 +14,7 @@ import traceback
 
 
 
-def CalclateERCPaid(YEAR_MONTH):
+def CalclateERCPaid(YEAR_MONTH: str):
 
 
     print_ethadd = []
@@ -25,20 +25,20 @@ def CalclateERCPaid(YEAR_MONTH):
     for path in memberfiles:
         try:
             with open("DataMemberInfo/" + path, "r") as fr:
-                postinfo = json.load(fr)
-                id = postinfo["user_id"]
-                eth = postinfo["eth_address"]
+                postinfo: dict = json.load(fr)
+                id: str = postinfo["user_id"]
+                eth: str = postinfo["eth_address"]
                 memberinfo[id] = eth
 
                 with open("DataMemberPaid/" + str(id) + ".json", "r") as fr2:
                     paidinfo = json.load(fr2)
                     if paidinfo["kaiwa_paid_amount"] != 0:
-                        amount = paidinfo["kaiwa_paid_amount"][YEAR_MONTH]
+                        amount: float = paidinfo["kaiwa_paid_amount"][YEAR_MONTH]
 
                         # キーの数値的maxは、最後の支払状況を指すため。
                         if isinstance(paidinfo["kaiwa_paid_amount"], dict):
                             # 最後に支払った月を得る
-                            last_month = max(paidinfo["kaiwa_paid_amount"].keys())
+                            last_month: str = max(paidinfo["kaiwa_paid_amount"].keys())
                             # その最後の支払いを引く
                             amount = amount - paidinfo["kaiwa_paid_amount"][last_month]
 

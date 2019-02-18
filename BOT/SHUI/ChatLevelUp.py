@@ -48,7 +48,7 @@ LV_GET_COIN_TABLE: list = [
 ]
 
 # そのレベルになるのに必要な総経験値(Mee6と同じ計算式)
-def need_experiment_value(level) -> int:
+def need_experiment_value(level: int) -> int:
     xp_to_desired_level = 5 / 6 * level * (2 * level * level + 27 * level + 91)
     return xp_to_desired_level
 
