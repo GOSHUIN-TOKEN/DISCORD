@@ -17,7 +17,7 @@ import sys, datetime, time
 import discord
 import EnvironmentVariable
 
-from typing import Union, List
+from typing import Union, List, Dict
 
 # パッケージのインポートとインスタンス作成
 client = discord.Client()
@@ -122,7 +122,7 @@ async def add_top_holder_role(roles, author: discord.Member, holder_info: dict):
             print(traceback.format_exception(t,v,tb))
             print(traceback.format_tb(e.__traceback__))
 
-async def remove_top_holder_role(roles, author: discord.Member):
+async def remove_top_holder_role(roles: List[discord.Role], author: discord.Member):
     global ROLE_NAME_TOP_HOLDER_1000
 
     # 現在トップホルダーの役職もってる？

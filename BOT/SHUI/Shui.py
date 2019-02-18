@@ -74,7 +74,7 @@ print(sm5)
 builtins.sm4 = sm4
 builtins.sm5 = sm5
 
-async def my_background_task_send_typing():
+async def my_background_task_send_typing() -> None:
     pass
 
     """
@@ -91,7 +91,7 @@ async def my_background_task_send_typing():
             NEED_TYPING_CHANNEL_OBJ = None
     """
 
-async def my_background_task_cache_usr_info():
+async def my_background_task_cache_usr_info() -> None:
 
     await client.wait_until_ready()
 
@@ -140,7 +140,7 @@ async def DeleteChannelAllMessage(message: discord.Message):
 
 # メッセージを受信するごとに実行される
 @client.event
-async def on_message(message: discord.Message):
+async def on_message(message: discord.Message) -> None:
 
     try:
         print(message.channel.id)

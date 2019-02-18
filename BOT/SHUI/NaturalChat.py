@@ -21,8 +21,9 @@ import ChatLevelUp
 
 Kernel32 = ctypes.windll.Kernel32
 
+from typing import Union, List, Dict, Tuple
 
-def CreateObject():
+def CreateObject() -> Tuple[NaturalChatMessage,NaturalChatMessage,NaturalChatMessage,NaturalChatMessage,NaturalChatMessage]:
     params = get_docomo_naturalchat_key()
     sm1 = NaturalChatMessage(params["KEY"], params["appid_01"])
     sm2 = NaturalChatMessage(params["KEY"], params["appid_02"])
@@ -33,7 +34,7 @@ def CreateObject():
 
 
 
-def get_docomo_naturalchat_key():
+def get_docomo_naturalchat_key() -> Dict[str, str]:
     KEY = os.getenv("DISCORD_DOCOMO_NATURALCHAT_KEY", r'')
     appid_01 = os.getenv("DISCORD_DOCOMO_NATURALCHAT_APPID_01", r'')
     appid_02 = os.getenv("DISCORD_DOCOMO_NATURALCHAT_APPID_02", r'')
@@ -206,5 +207,5 @@ class NaturalChatMessage:
 
 
 
-def NaturalChattableChannelRegex() -> list:
+def NaturalChattableChannelRegex() -> List[str]:
     return ["^.*見習い巫女.*", "^.*おみくじ.*" ]

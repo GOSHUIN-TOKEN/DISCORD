@@ -22,13 +22,13 @@ import traceback
 
 import JapaneseOmikuji
 
-from typing import Union, List
+from typing import Union, List, Dict, Tuple
 
 if False:
     client: discord.Client = discord.Client()
 
 
-def get_docomo_naturalchat_key() -> dict:
+def get_docomo_naturalchat_key() -> Dict[str, str]:
     KEY = os.getenv("DISCORD_DOCOMO_IMAGERECOGNITION_KEY", r'')
     return {"KEY":KEY}
 
@@ -54,7 +54,7 @@ def get_image_ext(fname: str) -> str:
 
 
 #画像データを投げて、カテゴリの候補上位5つを取得 (カテゴリ認識)
-def getImageCategory(fname: str, modelName="scene"):
+def getImageCategory(fname: str, modelName="scene") -> Tuple[str, float, str, float, str, float]:
 
     APIKEY: str = get_docomo_naturalchat_key()["KEY"]
     url: str = 'https://api.apigw.smt.docomo.ne.jp/imageRecognition/v1/concept/classify/'
@@ -112,7 +112,7 @@ def getImageCategory(fname: str, modelName="scene"):
 
 
 #画像データを投げて、カテゴリの候補上位5つを取得 (カテゴリ認識)
-def getImageScene(fname: str, modelName: str, message: discord.Message):
+def getImageScene(fname: str, modelName: str, message: discord.Message) -> dict:
 
     APIKEY: str = get_docomo_naturalchat_key()["KEY"]
     url: str = 'https://api.apigw.smt.docomo.ne.jp/imageRecognition/v1/concept/classify/'
@@ -232,7 +232,7 @@ async def download(url: str, file_name: str) -> str:
     return None
 
 
-async def analyze_image(message: discord.Message, url: str):
+async def analyze_image(message: discord.Message, url: str) -> None:
     try:
         # ビンゴは反応しない
         if "ビンゴ" in message.channel.name:
@@ -326,7 +326,7 @@ async def analyze_image(message: discord.Message, url: str):
 
 
 
-async def replay_image_message(message: discord.Message, word: str, isStrong = True):
+async def replay_image_message(message: discord.Message, word: str, isStrong = True) -> None:
     print("画像への返事")
     if isStrong:
         #await client.send_message(message.channel, word + " ですね！")
@@ -347,7 +347,7 @@ async def replay_image_message(message: discord.Message, word: str, isStrong = T
 # 現在のunixタイムを出す
 pre_datetime_unix_time: int = 0
 
-def delete_old_image(message):
+def delete_old_image(message) -> None:
 
     global pre_datetime_unix_time
 

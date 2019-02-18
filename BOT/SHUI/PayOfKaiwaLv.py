@@ -38,13 +38,13 @@ LV_GET_COIN_TABLE = [
 ]
 
 # そのレベルになるのに必要な総経験値(Mee6と同じ計算式)
-def need_experiment_value(level):
-    xp_to_desired_level = 5 / 6 * level * (2 * level * level + 27 * level + 91);
+def need_experiment_value(level: int) -> int:
+    xp_to_desired_level = 5 / 6 * level * (2 * level * level + 27 * level + 91)
     return xp_to_desired_level
 
 
 LV_TO_EXP_LIST = []
-def createChatLevelUpTable():
+def createChatLevelUpTable() -> None:
     if len(LV_TO_EXP_LIST) ==0:
         # lv200まで埋める
         for lv in range(0, 101):
@@ -54,7 +54,7 @@ def createChatLevelUpTable():
 
 
 
-def get_lv_from_exp(exp):
+def get_lv_from_exp(exp: int) -> int:
     lv = 0
     for t in LV_TO_EXP_LIST:
         # 指定された経験値より、レベル表の総合経験値が低いなら
@@ -63,7 +63,7 @@ def get_lv_from_exp(exp):
 
     return lv
 
-def get_coin_amount_from_lv(lv):
+def get_coin_amount_from_lv(lv: int) -> int:
     amount = 0
     for t in LV_GET_COIN_TABLE:
         # 指定されたレベル以下は全部
@@ -74,10 +74,10 @@ def get_coin_amount_from_lv(lv):
 
 
 
-def show_level_infomation(id, exp):
+def show_level_infomation(id: str, exp: int):
 
     try:
-        lv = get_lv_from_exp(exp)
+        lv: int = get_lv_from_exp(exp)
     except Exception as e:
         t, v, tb = sys.exc_info()
         print(traceback.format_exception(t,v,tb))
@@ -85,7 +85,7 @@ def show_level_infomation(id, exp):
         print("show_level_infomation 中エラー")
 
 
-def CalclatePaid(YEAR_MONTH):
+def CalclatePaid(YEAR_MONTH: str) -> None:
 
     postjsonfiles = os.listdir('DataMemberPostInfo')
     for path in postjsonfiles:

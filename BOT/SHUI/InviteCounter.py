@@ -49,7 +49,7 @@ def get_data_inviteinfo_path() -> str:
 USER_ID_LIST: dict = {}
 
 
-async def on_member_join(member: discord.Member):
+async def on_member_join(member: discord.Member) -> None:
     print("on_member_join")
 
     try:
@@ -145,7 +145,7 @@ def get_member_id_hash(member: discord.Member) -> dict:
 
     return member_id_hash
 
-async def on_member_remove(member: discord.Member):
+async def on_member_remove(member: discord.Member) -> None:
 
     try:
         member_id_list = get_member_id_list(member)

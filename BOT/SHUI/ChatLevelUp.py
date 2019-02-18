@@ -21,6 +21,8 @@ import RegistEtherMemberInfo
 
 import EastAsianWidthCounter
 
+from typing import Union, List, Dict, Tuple
+
 if False:
     client: discord.Client = discord.Client()
 
@@ -119,11 +121,11 @@ def has_post_data(message: discord.Message) -> bool:
 
 
 
-async def is_syougou_up(message: discord.Message):
+async def is_syougou_up(message: discord.Message) -> None:
     pass
 
 
-async def show_level_infomation(message: discord.Message, exp: int, default="会話レベル情報"):
+async def show_level_infomation(message: discord.Message, exp: int, default="会話レベル情報") -> None:
 
     paidinfo: dict = None
     try:
@@ -184,7 +186,7 @@ async def show_level_infomation(message: discord.Message, exp: int, default="会
         print(traceback.format_tb(e.__traceback__))
         print("show_level_infomation 中エラー")
 
-async def command_show_level_infomation(message: discord.Message, author: discord.Member):
+async def command_show_level_infomation(message: discord.Message, author: discord.Member) -> None:
 
     try:
         if not has_post_data(message):
@@ -212,7 +214,7 @@ def is_level_command_condition(message: discord.Message) -> bool:
     return False
 
 
-async def add_level_role(roles, author: discord.Member, level: int):
+async def add_level_role(roles: List[discord.Role], author: discord.Member, level: int) -> None:
     # そのサーバーが持ってる役職
     roles_list = roles
     for r in roles_list:
@@ -231,6 +233,7 @@ async def add_level_role(roles, author: discord.Member, level: int):
             t, v, tb = sys.exc_info()
             print(traceback.format_exception(t,v,tb))
             print(traceback.format_tb(e.__traceback__))
+
 
 async def all_member_add_level_role(message: discord.Message):
     for m in list(message.channel.server.members):
@@ -295,7 +298,7 @@ def remove_emoji(src_str: str) -> str:
 # 投稿を各チャンネルで保持
 update_kaiwa_post_hasu: dict = {}
 
-async def update_one_kaiwa_post_data(message: discord.Message):
+async def update_one_kaiwa_post_data(message: discord.Message) -> dict:
 
     try:
         # print("キャッシュ")
@@ -452,7 +455,7 @@ async def update_one_kaiwa_post_data(message: discord.Message):
 
 
 # 1人分のメンバーデータの作成
-async def make_one_kaiwa_post_data(message: discord.Message):
+async def make_one_kaiwa_post_data(message: discord.Message) -> dict:
     try:
         postinfo = {
             "user_id": message.author.id,
@@ -476,7 +479,7 @@ async def make_one_kaiwa_post_data(message: discord.Message):
 
 
 
-async def push_kaiwa_post(message: discord.Message, text: str):
+async def push_kaiwa_post(message: discord.Message, text: str) -> None:
 
     postinfo = await update_one_kaiwa_post_data(message)
     if postinfo != None:

@@ -23,6 +23,8 @@ import copy
 import RegistEtherMemberInfo
 import EastAsianWidthCounter
 
+from typing import Union, List, Dict, Tuple
+
 if False:
     client: discord.Client = discord.Client()
 
@@ -202,7 +204,7 @@ def is_busy_timestamp(message: discord.Message) -> bool:
 
     return False
 
-async def get_embedded_omikuji_object(message: discord.Message):
+async def get_embedded_omikuji_object(message: discord.Message) -> Tuple[discord.Embed, str]:
 
     has = await RegistEtherMemberInfo.has_member_data(message, message.author.id, True)
     print("メンバー情報がある？" + str(has))
@@ -271,7 +273,7 @@ async def get_embedded_omikuji_object(message: discord.Message):
     if is_issue_member or member_exp < 200:
         print("★問題のあるメンバー")
         rndstr = random.choice(["吉", "吉", "吉", "吉", "中吉", "中吉", "中吉", "中吉", "小吉", "小吉", "小吉", "小吉", "末吉", "末吉", "末吉", "末吉", "凶", "大凶"])
-    omikuji_key = rndstr
+    omikuji_key: str = rndstr
     omikuji_lv = un_list[rndstr]
     print("キ★" + omikuji_key)
     print("値★" + omikuji_lv)
@@ -349,7 +351,7 @@ async def get_embedded_omikuji_object(message: discord.Message):
 
 async def say_embedded_omikuji_message(message: discord.Message) -> str:
     if is_omikuji_command(message.content):
-        em: discord.Embed, deme: str = await get_embedded_omikuji_object(message)
+        em, deme = await get_embedded_omikuji_object(message)
         if em != None:
             await client.send_message(message.channel, embed=em)
             return deme
@@ -393,7 +395,7 @@ async def get_omikuji_from_kaiwa(message: discord.Message, override_message = ""
 
 
 def is_report_command_condition(command: str) -> bool:
-    if re.match("^!omikujiinfo \d{8}$", command):
+    if re.match(r"^!omikujiinfo \d{8}$", command):
         return True
 
 

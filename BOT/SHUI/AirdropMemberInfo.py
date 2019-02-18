@@ -159,7 +159,7 @@ async def make_one_member_data(message, address, id):
     return False
 
 
-async def make_one_member_paid(message, id):
+async def make_one_member_paid(message: discord.Message, id: str):
     try:
         paidinfo = {
             "airdrop_201809": 0,
@@ -181,7 +181,7 @@ async def make_one_member_paid(message, id):
     return False
 
 
-async def regist_one_member_data(message, id):
+async def regist_one_member_data(message: discord.Message, id: str):
 
     address = message.content.strip()
     # イーサアドレス登録だ
@@ -217,14 +217,14 @@ async def regist_one_member_data(message, id):
         await report_error(message, "イーサアドレスのパターンではありません。\n(The post is not a pattern of Ether wallet address.)")
         return
 
-def is_regist_one_member_data_condition(message):
+def is_regist_one_member_data_condition(message: discord.Message) -> bool:
     if message.channel == get_ether_regist_channel(message):
         return True
 
     return False
 
 
-def get_ether_regist_channel(message):
+def get_ether_regist_channel(message: discord.Message) -> discord.Channel:
     for ch in message.channel.server.channels:
         if "regist-airdrop-eth" in str(ch):
             return ch
@@ -233,7 +233,7 @@ def get_ether_regist_channel(message):
 
 
 
-async def show_one_member_data(message, id):
+async def show_one_member_data(message: discord.Message, id: str) -> bool:
     try:
         path = get_data_memberinfo_path(message, id)
         has = await has_member_data(message, id, True)
@@ -248,7 +248,7 @@ async def show_one_member_data(message, id):
         path = get_data_memberpaid_path(message, id)
         print(path)
         with open(path, "r") as fr:
-            paidinfo = json.load(fr)
+            paidinfo: dict = json.load(fr)
 
         em = discord.Embed(title="", description="", color=0xDEED33)
         avator_url = message.author.avatar_url or message.author.default_avatar_url
@@ -274,7 +274,7 @@ async def show_one_member_data(message, id):
 
 
 
-def is_show_one_member_data_condition(message):
+def is_show_one_member_data_condition(message: discord.Message) -> bool:
     msg = str(message.content).strip()
     if "!airdropinfo" == msg:
         return True
@@ -283,11 +283,11 @@ def is_show_one_member_data_condition(message):
 
 
 
-async def has_member_data(message, id, withMessage):
+async def has_member_data(message:discord.Message, id: str, withMessage: str) -> bool:
     path = get_data_memberinfo_path(message, id)
     if not os.path.exists(path):
         if withMessage:
-            ch = get_ether_regist_channel(message)
+            ch: discord.Channel = get_ether_regist_channel(message)
             await report_error(message, "登録情報がありません。ご自身の **MyEtherWallet** など、\nエアドロが受け取れるETHウォレットアドレスを投稿し、\n**コインを受け取れるように**してください。\n(There is no your registration information. \n Please post your Ether wallet address such as your own MyEtherWallet, so that you can receive BLACK DIA COINs.)")
         return False
     else:

@@ -8,14 +8,16 @@
 import re
 import discord
 
+from typing import Union, List, Dict, Tuple
+
 if False:
     client: discord.Client = discord.Client()
 
 # Wavesアドレスはダメなチャンネル
-nopermit_channnel_of_waves_address: list = ["^雑談$", "^english.$", "ルーレット.+", "^botでランクを確認$", "^★おみくじコーナー.+", "^ロゴ投稿場", "^招待人数確認", "^bdaチャート"]
+nopermit_channnel_of_waves_address: List[str] = ["^雑談$", "^english.$", "ルーレット.+", "^botでランクを確認$", "^★おみくじコーナー.+", "^ロゴ投稿場", "^招待人数確認", "^bdaチャート"]
 
 # Etherアドレスはダメなチャンネル
-nopermit_channnel_of_ether_address: list = ["^雑談$", "^english.$", "ルーレット.+", "^botでランクを確認$", "^★おみくじコーナー.+", "^ロゴ投稿場", "^招待人数確認", "^bdaチャート", "^新規の方のみairdrop", "^new-people-only-airdrop",]
+nopermit_channnel_of_ether_address: List[str]= ["^雑談$", "^english.$", "ルーレット.+", "^botでランクを確認$", "^★おみくじコーナー.+", "^ロゴ投稿場", "^招待人数確認", "^bdaチャート", "^新規の方のみairdrop", "^new-people-only-airdrop",]
 
 # Wavesウォレットのアドレスのパターン
 def is_message_waves_pattern(message: str) -> bool:

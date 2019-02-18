@@ -7,13 +7,16 @@
 
 import discord
 
+from typing import Union, List, Dict, Tuple
 
+if False:
+    client: discord.Client = discord.Client()
 
-def is_mic_permission_condition(message):
+def is_mic_permission_condition(message: discord.Message) -> bool:
     return str(message.channel) in ["📢朱伊のマイク"]
 
 
-def say_mic_message(message):
+def say_mic_message(message: discord.Message) -> Tuple[discord.Channel, str]:
 
     all_message = message.content
     message_list = all_message.split("\n")
@@ -34,7 +37,7 @@ def say_mic_message(message):
     print("マイク対象のチャンネルIDは:" + str(target_channel_id) )
 
     if target_channel_id == "":
-        return "", ""
+        return None, ""
 
 #    print(msg)
     target_channel = discord.Object(id=target_channel_id)
@@ -42,9 +45,9 @@ def say_mic_message(message):
     return target_channel, msg
 
 
-async def say_message(message):
+async def say_message(message: discord.Message):
     target_channel, msg = say_mic_message(message)
-    if target_channel != "" and msg != "":
+    if target_channel != None and msg != "":
         await client.send_message(target_channel, msg)
 
     # if message.attachments != None:
