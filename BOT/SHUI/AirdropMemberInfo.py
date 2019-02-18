@@ -20,6 +20,7 @@ import discord
 
 import WalletAddressDeleter
 
+from typing import Union, List, Dict, Tuple
 
 if False:
     client: discord.Client = discord.Client()
@@ -48,7 +49,7 @@ def get_data_memberpaid_path(message, id):
 
 
 
-async def update_one_member_data(message, address, id):
+async def update_one_member_data(message: discord.Message, address: str, id: str) -> bool:
     try:
         has_address = await is_has_address(message, address, id)
         if has_address:
@@ -78,7 +79,7 @@ async def update_one_member_data(message, address, id):
     return False
 
 
-async def is_has_address(message, address, id):
+async def is_has_address(message: discord.Message, address: str, id: str) -> bool:
     try:
 
         path = "AirdropMemberInfo/AirdropMemberInfoList.json"
@@ -103,7 +104,7 @@ async def is_has_address(message, address, id):
     return False
 
 
-async def update_all_member_data(message, memberinfo):
+async def update_all_member_data(message: discord.Message, memberinfo: dict) -> bool:
     try:
 
         path = "AirdropMemberInfo/AirdropMemberInfoList.json"
@@ -128,7 +129,7 @@ async def update_all_member_data(message, memberinfo):
 
 
 # 1人分のメンバーデータの作成
-async def make_one_member_data(message, address, id):
+async def make_one_member_data(message: discord.Message, address: str, id: str) -> bool:
     try:
         has_address = await is_has_address(message, address, id)
         if has_address:
@@ -159,7 +160,7 @@ async def make_one_member_data(message, address, id):
     return False
 
 
-async def make_one_member_paid(message: discord.Message, id: str):
+async def make_one_member_paid(message: discord.Message, id: str) -> bool:
     try:
         paidinfo = {
             "airdrop_201809": 0,
@@ -181,7 +182,7 @@ async def make_one_member_paid(message: discord.Message, id: str):
     return False
 
 
-async def regist_one_member_data(message: discord.Message, id: str):
+async def regist_one_member_data(message: discord.Message, id: str) -> None:
 
     address = message.content.strip()
     # イーサアドレス登録だ
