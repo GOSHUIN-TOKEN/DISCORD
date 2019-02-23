@@ -119,9 +119,7 @@ async def on_member_join(member: discord.Member) -> None:
 
         await client.send_message(ch2, msg_content)
 
-        # キャッシュにuserオブジェクトの方を追加。userオブジェクトは
-        # サーチが重いのでこまめにキャッシュしておく
-        
+        # よりサーチを高速化するため、キャッシュしておく
         USER_ID_LIST[member.id] = member
 
     except:
