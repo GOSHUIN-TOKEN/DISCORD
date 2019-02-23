@@ -23,16 +23,6 @@ Kernel32 = ctypes.windll.Kernel32
 
 from typing import Union, List, Dict, Tuple
 
-def CreateObject() -> Tuple[NaturalChatMessage,NaturalChatMessage,NaturalChatMessage,NaturalChatMessage,NaturalChatMessage]:
-    params = get_docomo_naturalchat_key()
-    sm1 = NaturalChatMessage(params["KEY"], params["appid_01"])
-    sm2 = NaturalChatMessage(params["KEY"], params["appid_02"])
-    sm3 = NaturalChatMessage(params["KEY"], params["appid_03"])
-    sm4 = NaturalChatMessage(params["KEY"], params["appid_04"])
-    sm5 = NaturalChatMessage(params["KEY"], params["appid_05"])
-    return sm1, sm2, sm3, sm4, sm5
-
-
 
 def get_docomo_naturalchat_key() -> Dict[str, str]:
     KEY = os.getenv("DISCORD_DOCOMO_NATURALCHAT_KEY", r'')
@@ -204,6 +194,14 @@ class NaturalChatMessage:
 
 
 
+def CreateObject() -> Tuple[NaturalChatMessage,NaturalChatMessage,NaturalChatMessage,NaturalChatMessage,NaturalChatMessage]:
+    params = get_docomo_naturalchat_key()
+    sm1 = NaturalChatMessage(params["KEY"], params["appid_01"])
+    sm2 = NaturalChatMessage(params["KEY"], params["appid_02"])
+    sm3 = NaturalChatMessage(params["KEY"], params["appid_03"])
+    sm4 = NaturalChatMessage(params["KEY"], params["appid_04"])
+    sm5 = NaturalChatMessage(params["KEY"], params["appid_05"])
+    return sm1, sm2, sm3, sm4, sm5
 
 
 

@@ -155,7 +155,7 @@ def get_today_omikuji_data(date: str) -> dict:
 
     return False
 
-def save_today_omikuji_data(date: str, dic: dic) -> bool:
+def save_today_omikuji_data(date: str, dic: dict) -> bool:
     fullpath = get_date_omikuji_file(date)
 
     try:

@@ -103,11 +103,10 @@ async def my_background_task_cache_usr_info() -> None:
                 break
 
             try:
-                _usrobj = await client.get_user_info(mem.id)
-                InviteCounter.USER_ID_LIST[mem.id] = _usrobj
+                InviteCounter.USER_ID_LIST[mem.id] = mem
                 _counter = _counter + 1
                 if _counter % 100 == 0:
-                    print("User Objectを" + str(_counter) + "名キャッシュしました")
+                    print("Member Objectを" + str(_counter) + "名キャッシュしました")
 
             except Exception as e:
                 t, v, tb = sys.exc_info()
@@ -171,6 +170,12 @@ async def on_message(message: discord.Message) -> None:
                 return
     except:
         pass
+    
+    print(message.author.created_at)
+    print(type(message.author))
+    __user = await client.get_user_info(message.author.id)
+    print(type(__user))
+    print(__user.created_at)
 
     # こみやんま#0314
     if message.author.id == "397238348877529099":

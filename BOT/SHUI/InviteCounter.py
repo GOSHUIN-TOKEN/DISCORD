@@ -121,9 +121,8 @@ async def on_member_join(member: discord.Member) -> None:
 
         # キャッシュにuserオブジェクトの方を追加。userオブジェクトは
         # サーチが重いのでこまめにキャッシュしておく
-        _mem_user: discord.User = await client.get_user_info(member.id)
-        if _mem_user:
-            USER_ID_LIST[member.id] = _mem_user
+        
+        USER_ID_LIST[member.id] = member
 
     except:
         pass
@@ -427,9 +426,6 @@ async def invitesraw_show_command(message: discord.Message, target_author: disco
                         # サーバーに居る人なら
                         if child_id in member_id_hash:
                             member_obj = member_id_hash[child_id]
-
-                            # メンバーオブジェクト⇒ユーザーオブジェクトへ
-                            # _user = await client.get_user_info(child_id)
 
                             # アカウント作成時期
                             create_time = member_obj.joined_at

@@ -2,8 +2,10 @@
     "user_id": "397238348877529099",
     "posthistory": [
         "!ticket",
-        "!-!clear"
+        "!-!clear",
+        "aaa",
+        "aa"
     ],
     "exp": 15,
-    "post_last_gettime": 1544884331
+    "post_last_gettime": 1550944871
 }
