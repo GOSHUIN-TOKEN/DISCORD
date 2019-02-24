@@ -13,6 +13,7 @@ import os
 import sys, datetime, time
 import traceback
 
+from typing import Union, List, Dict, Tuple
 
 LV_GET_COIN_TABLE = [
     [5,5000,],
@@ -38,7 +39,7 @@ LV_GET_COIN_TABLE = [
 ]
 
 # そのレベルになるのに必要な総経験値(Mee6と同じ計算式)
-def need_experiment_value(level: int) -> int:
+def need_experiment_value(level: int) -> float:
     xp_to_desired_level = 5 / 6 * level * (2 * level * level + 27 * level + 91)
     return xp_to_desired_level
 

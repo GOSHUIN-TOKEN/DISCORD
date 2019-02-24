@@ -26,7 +26,7 @@ from typing import Union, List, Dict, Tuple
 if False:
     client: discord.Client = discord.Client()
 
-LV_GET_COIN_TABLE: list = [
+LV_GET_COIN_TABLE = [
     [5,5000,],
     [10,17000,],
     [15,28000,],
@@ -50,7 +50,7 @@ LV_GET_COIN_TABLE: list = [
 ]
 
 # そのレベルになるのに必要な総経験値(Mee6と同じ計算式)
-def need_experiment_value(level: int) -> int:
+def need_experiment_value(level: int) -> float:
     xp_to_desired_level = 5 / 6 * level * (2 * level * level + 27 * level + 91)
     return xp_to_desired_level
 
