@@ -29,7 +29,7 @@ def translation_method_post(text: str, src_lang: str, dst_lang: str) -> str:
     with urllib.request.urlopen(req) as res:
         byte_result = res.read()
         response_body: str = byte_result.decode(encoding='utf-8')
-        response_json:dict = json.loads(response_body)
+        response_json: dict = json.loads(response_body)
         return response_json["result"]
 
     return ""
