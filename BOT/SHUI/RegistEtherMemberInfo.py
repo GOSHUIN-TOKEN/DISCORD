@@ -26,7 +26,7 @@ if False:
 
 async def report_error(message, error_msg):
     em = discord.Embed(title=" ", description="─────────\n" , color=0xDEED33)
-    avator_url = client.user.default_avatar_url or client.user.default_avatar_url
+    avator_url = client.user.avatar_url or client.user.default_avatar_url
     avator_url = avator_url.replace(".webp?", ".png?")
     em.set_author(name='朱伊', icon_url=avator_url)
 

@@ -170,7 +170,7 @@ def save_today_omikuji_data(date: str, dic: dict) -> bool:
 def get_busy_omikuji_message(message: discord.Message) -> discord.Embed:
     em = discord.Embed(title=" ", description="─────────\n" + message.author.display_name, color=0xDEED33)
 
-    avator_url = client.user.default_avatar_url or client.user.default_avatar_url
+    avator_url = client.user.avatar_url or client.user.default_avatar_url
     avator_url = avator_url.replace(".webp?", ".png?")
     # em.set_author(name='朱伊', icon_url=avator_url)
 
@@ -179,7 +179,7 @@ def get_busy_omikuji_message(message: discord.Message) -> discord.Embed:
 
 def get_error_omikuji_message(message: discord.Message) -> discord.Embed:
     em = discord.Embed(title=" ", description="─────────\n" + message.author.display_name, color=0xDEED33)
-    avator_url = client.user.default_avatar_url or client.user.default_avatar_url
+    avator_url = client.user.avatar_url or client.user.default_avatar_url
     avator_url = avator_url.replace(".webp?", ".png?")
     # em.set_author(name='朱伊', icon_url=avator_url)
 
@@ -332,7 +332,7 @@ async def get_embedded_omikuji_object(message: discord.Message) -> Tuple[discord
     #
     em = discord.Embed(title="本日のおみくじ", description= "<@" + str(message.author.id) + ">", color=0xDEED33)
 
-    avator_url = client.user.default_avatar_url or client.user.default_avatar_url
+    avator_url = client.user.avatar_url or client.user.default_avatar_url
     avator_url = avator_url.replace(".webp?", ".png?")
     # em.set_author(name='朱伊', icon_url=avator_url)
 

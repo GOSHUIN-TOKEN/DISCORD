@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2018 Akitsugu Komiyama
 # under the GPL v3 License.
-# 
+#
 
 import builtins
 import re
@@ -19,13 +19,14 @@ import unicodedata
 
 import copy
 import asyncio
+import aiohttp
 
 from PIL import Image
 from PIL import ImageDraw
 
 import EnvironmentVariable
 
-
+from typing import Union, List, Dict, Tuple
 
 
 # 上記で取得したアプリのトークンを入力
@@ -33,7 +34,7 @@ import EnvironmentVariable
 
 
 # テストサーバー用のトークン
-BOT_TOKEN = EnvironmentVariable.get_discord_bot_token()
+BOT_TOKEN: str = EnvironmentVariable.get_discord_bot_token()
 
 
 
@@ -49,7 +50,7 @@ class UzurasInfo:
         self.member_obj = None
         self.assign()
 
-    def assign(self):
+    def assign(self) -> bool:
 
         # 格納済みなら何もしない
         if self.member_obj != None:
@@ -68,7 +69,7 @@ class UzurasInfo:
 builtins.uzuras_info = None
 
 class UzurasActInfo:
-    def __init__(self, uzuras_info):
+    def __init__(self, uzuras_info: UzurasInfo):
         # 自分自身の情報ではあるが、
         # 自分自信のユーザーオブジェクト⇒メンバーオブジェクトがちょっと変換が重いので
         # ここで格納しておく。
@@ -102,20 +103,36 @@ async def my_background_task_watching_uzuras():
 
         if uzuras_info.member_obj:
             if uzuras_info.member_obj.status == discord.Status.online:
-                await client.change_nickname(uzuras_act_info.member_obj, "鶉･演出《鶉･起》")
+                await client.change_nickname(uzuras_act_info.member_obj, "うずらっぷ《起》")
             else:
-                await client.change_nickname(uzuras_act_info.member_obj, "鶉･演出《鶉･眠》")
+                await client.change_nickname(uzuras_act_info.member_obj, "うずらっぷ《眠》")
 
         await asyncio.sleep(5)
-    
+
+# Uzurasを監視するためのバックグラウンドタスク
+async def my_avator_copy_from_uzuras():
+
+    await client.wait_until_ready()
+
+    uzuras_info = UzurasInfo()
+
+    while not client.is_closed:
+
+        if uzuras_info.member_obj:
+            uzuras_author = uzuras_info.member_obj
+            avator_url: str = uzuras_author.avatar_url or uzuras_author.default_avatar_url
+            avator_url: str = avator_url.replace(".webp?", ".png?")
+            await setavatar(avator_url)
+
+        await asyncio.sleep(60*60)
 
 # 現在の季節のディレクトリ
-def GetCurrentSeasonDirectory():
+def GetCurrentSeasonDirectory() -> str:
     dir = "./base/winter"
     return dir
 
 # ベースとなるイメージの取得
-def GetBaseImageRelativePath(dir):
+def GetBaseImageRelativePath(dir: str):
     base_list = os.listdir(dir)
     file_name = random.choice(base_list)
     base_file_path = dir + "/" + file_name
@@ -123,12 +140,12 @@ def GetBaseImageRelativePath(dir):
     return base_image, file_name
 
 # コインのロゴイメージへの相対パス
-def GetCoinImageRelativePath(coinname):
+def GetCoinImageRelativePath(coinname: str) -> str:
     coin_logo_path = "./icon/" + coinname.upper() + ".png"
     return coin_logo_path
 
 # 現在の時間をIntでもらう
-def GetIntOfNowTimeStamp():
+def GetIntOfNowTimeStamp() -> int:
     # 現在のunixタイムを出す
     now = datetime.datetime.now()
     unix = now.timestamp()
@@ -136,7 +153,7 @@ def GetIntOfNowTimeStamp():
     return unix
 
 
-def MakeRainImage(message, coinname, tip, user_num):
+def MakeRainImage(message: discord.Message, coinname: str, tip: int, user_num: int) -> Tuple[str, str, str]:
     dir = GetCurrentSeasonDirectory()
     # ベースとなるイメージと、イメージのファイル名
     base_image, file_name = GetBaseImageRelativePath(dir)
@@ -158,15 +175,15 @@ def MakeRainImage(message, coinname, tip, user_num):
 
     # 現在のunixタイムを出す
     unix = GetIntOfNowTimeStamp()
-    
+
     upload_file_relative_path = str(unix) + "_" + str(message.id) + "_rain" + ".png"
     temp_file_relative_path = "RainTempImage/" + upload_file_relative_path
-    
+
     base_image.save(temp_file_relative_path)
     return temp_file_relative_path, upload_file_relative_path, file_name
 
 # ベースとなるイメージに１つコインを載せる
-def RideCoinImage(coin_logo_path, base_image):
+def RideCoinImage(coin_logo_path: str, base_image):
     # コインのイメージ
     coin_img = Image.open(coin_logo_path)
     # 大きさを適当にランダムで変更
@@ -183,10 +200,10 @@ def RideCoinImage(coin_logo_path, base_image):
 
 
 # 前回削除をこころみたUnixTime
-pre_datetime_unix_time = 0
+pre_datetime_unix_time: int = 0
 
 # 古いファイルの削除を試みる
-def TryDeleteOldImageFile(message):
+def TryDeleteOldImageFile(message: discord.Message):
 
     global pre_datetime_unix_time
 
@@ -208,7 +225,7 @@ def TryDeleteOldImageFile(message):
         # print(unix-pre_datetime_unix_time)
 
 # 古いファイルの削除
-def DeleteOldImageFile(temp_dir, unix):
+def DeleteOldImageFile(temp_dir: str, unix: int) -> int:
     files = os.listdir(temp_dir)
     if len(files) > 1000:
         for file in files:
@@ -229,14 +246,14 @@ def DeleteOldImageFile(temp_dir, unix):
                 print(sys.exc_info())
     return unix
 
-def PrintMessageAuthorAvatorUrl(message):
+def PrintMessageAuthorAvatorUrl(message: discord.Message) -> None:
     avator_url = message.author.avatar_url or message.author.default_avatar_url
     avator_url = avator_url.replace(".webp?", ".png?")
     print(avator_url)
 
 # メッセージを受信するごとに実行される
 @client.event
-async def on_message(message):
+async def on_message(message: discord.Message):
 
     # メッセージ投稿者のアバターのURLをプリント
     # PrintMessageAuthorAvatorUrl(message)
@@ -247,12 +264,12 @@ async def on_message(message):
 
     try:
         # 送信主がBOTなら処理しない
-        roles = message.author.roles;
+        roles = message.author.roles
         is_uzura = False
         for r in roles:
             if r.name == "うずら":
                 is_uzura = True
-                
+
         if not is_uzura:
             return
 
@@ -294,11 +311,30 @@ async def on_message(message):
         print("例外:on_message error")
 
 
+previous_uzura_avator_url = ""
+async def setavatar(uzura_avator_url: str):
 
+    global previous_uzura_avator_url
 
+    # 同じだったら更新しない
+    if previous_uzura_avator_url == uzura_avator_url:
+        return
+    previous_uzura_avator_url = uzura_avator_url
+
+    data = None
+    async with aiohttp.ClientSession() as session:
+        async with session.get(uzura_avator_url) as r:
+            data = await r.read()
+
+    if data == None:
+        return
+
+    await client.edit_profile(avatar=data)
+    print("Avator Url is update!")
 
 
 client.loop.create_task(my_background_task_watching_uzuras())
+client.loop.create_task(my_avator_copy_from_uzuras())
 
 # APP(BOT)を実行
 client.run(BOT_TOKEN)

@@ -90,7 +90,7 @@ def get_sequence_matcher_coef(test_1: str, text_2: str) -> float:
 async def report_error(message: discord.Message, error_msg: str):
     print(message, error_msg)
     em = discord.Embed(title=" ", description="─────────\n" , color=0xDEED33)
-    avator_url: str = client.user.default_avatar_url or client.user.default_avatar_url
+    avator_url: str = client.user.avatar_url or client.user.default_avatar_url
     avator_url: str = avator_url.replace(".webp?", ".png?")
     em.set_author(name='朱伊', icon_url=avator_url)
 
