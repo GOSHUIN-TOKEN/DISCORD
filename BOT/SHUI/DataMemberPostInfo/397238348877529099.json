@@ -4,8 +4,9 @@
         "!ticket",
         "!-!clear",
         "aaa",
-        "aa"
+        "aa",
+        "\u3042\u3042\u3042"
     ],
-    "exp": 15,
-    "post_last_gettime": 1550944871
+    "exp": 24,
+    "post_last_gettime": 1551623943
 }

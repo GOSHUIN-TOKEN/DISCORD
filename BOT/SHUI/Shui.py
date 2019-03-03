@@ -33,6 +33,8 @@ import asyncio
 import ChatLevelUp
 import InviteCounter
 
+import Translation
+
 import threading
 from typing import List, NamedTuple
 
@@ -184,6 +186,12 @@ async def on_message(message: discord.Message) -> None:
     if is_delete:
         return
 
+    # 翻訳コマンド
+    if Translation.is_translation_condition(message):
+        msg = await Translation.translate(message)
+        await client.send_message(message.channel, msg)
+        return
+
     # 他メンバーの情報の表示
     if RegistEtherMemberInfo.is_show_another_member_data_condition(message):
         await RegistEtherMemberInfo.show_another_member_data(message)
@@ -244,6 +252,8 @@ async def on_message(message: discord.Message) -> None:
     if InviteCounter.is_invites_show_command_condition(message.content):
         await InviteCounter.invites_show_command(message, message.author)
         return
+
+
 
     if "歌留多" in message.channel.name:
         return
