@@ -128,7 +128,30 @@ async def my_avator_copy_from_uzuras():
 
 # 現在の季節のディレクトリ
 def GetCurrentSeasonDirectory() -> str:
-    dir = "./base/winter"
+
+    date = datetime.datetime.now()
+    year_first = datetime.datetime(date.year, 1, 1)
+    diff: datetime.timedelta = date - year_first
+    days = diff.days
+    month_season_limit = [
+        75+92*0, # 冬
+        75+92*1, # 春
+        75+92*2, # 夏
+        75+92*3, # 秋
+        75+92*4  # 冬
+    ]
+    if days < month_season_limit[0]:
+        cur_season_dir = "winter"
+    elif days < month_season_limit[1]:
+        cur_season_dir = "spring"
+    elif days < month_season_limit[2]:
+        cur_season_dir = "summer"
+    elif days < month_season_limit[3]:
+        cur_season_dir = "autumn"
+    elif days < month_season_limit[4]:
+        cur_season_dir = "winter"
+
+    dir = "./base/" + cur_season_dir
     return dir
 
 # ベースとなるイメージの取得
@@ -273,7 +296,7 @@ async def on_message(message: discord.Message):
         if not is_uzura:
             return
 
-        mrain = re.search("\<\@(.+?)\> \-\-\- ([0-9\.]+)(.+?)\(Proportional to speech amount\) \-\-\-\> (\d+) Users ", message.content, re.IGNORECASE)
+        mrain = re.search(r"\<\@(.+?)\> \-\-\- ([0-9\.]+)(.+?)\(Proportional to speech amount\) \-\-\-\> (\d+) Users ", message.content, re.IGNORECASE)
         mtip = None
         if mrain:
             print(mrain.group(1)) # WHO
@@ -285,7 +308,7 @@ async def on_message(message: discord.Message):
                 send_message_obj = await client.send_file(message.channel, temp_file_relative_path, content=content_message, filename=upload_file_relative_path)
 
         else:
-            mtip = re.search("\<\@(.+?)\> \-\- ([0-9\.]+)(.+?) \-\-\> (\d+) Users", message.content, re.IGNORECASE)
+            mtip = re.search(r"\<\@(.+?)\> \-\- ([0-9\.]+)(.+?) \-\-\> (\d+) Users", message.content, re.IGNORECASE)
             if mtip:
                 print("mtip")
                 print(mtip.group(1)) # WHO
