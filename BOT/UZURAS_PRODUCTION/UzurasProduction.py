@@ -140,6 +140,7 @@ def GetCurrentSeasonDirectory() -> str:
         75+92*3, # 秋
         75+92*4  # 冬
     ]
+    cur_season_dir = ""
     if days < month_season_limit[0]:
         cur_season_dir = "winter"
     elif days < month_season_limit[1]:
