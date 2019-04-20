@@ -2,7 +2,7 @@
 cd %~d0%~p0
 
 python -m pip install -U pip
-python -m pip install -U discord.py
+python -m pip install discord==0.16.12
 
 :LOOP_LABEL
 python TempleBell.py
