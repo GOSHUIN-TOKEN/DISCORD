@@ -1,2 +1,2 @@
 # DISCORD
-https://discord.gg/adKrzdF
+http://discord.goshuin.in/
