@@ -21,7 +21,7 @@ def translation_method_post(text: str, src_lang: str, dst_lang: str) -> str:
     try:
         headers: str = {"Content-Type": "application/json"}
 
-        script_url: str = r"https://script.google.com/macros/s/" + get_gas_api_key() + "/exec"
+        script_url: str = get_gas_api_key()
 
         data: dict  = {
             "text": text,
